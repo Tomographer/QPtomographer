@@ -10,6 +10,10 @@ Welcome to dnormtomo's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   dnormtomo
+   dnormtomo.channelspace
+   dnormtomo.bistates
+   dnormtomo.util
 
 
 Indices and tables
