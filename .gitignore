@@ -4,3 +4,5 @@ __pycache__
 build
 dist
 *.py[cdo]
+.ipynb_checkpoints
+doc/_build

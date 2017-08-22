@@ -27,6 +27,11 @@ try:
     import tomographer # prerequisite
 except ImportError:
     raise RuntimeError("ERROR: Please install `tomographer` first.")
+# version check
+import tomographer.version
+if tomographer.version.version_info < (5, 0):
+    raise RuntimeError("ERROR: dnormtomo requires `tomographer` >= 5.0. "
+                       "Please upgrade `tomographer`.")
 
 import tomographer.include # tomographer.include.get_include()
 from tomographer.include import find_include_dir, find_lib, Vars, ensure_str

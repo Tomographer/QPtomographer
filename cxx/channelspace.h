@@ -172,7 +172,7 @@ public:
   static_assert(ChannelTypes::MatrixType::RowsAtCompileTime == Eigen::Dynamic &&
                 ChannelTypes::MatrixType::RowsAtCompileTime == Eigen::Dynamic,
                 "ChannelSpaceMHWalker: the code here requires the matrix type to be dynamic");
-  static_assert(DenseLLH::LLHCalcType == Tomographer::DenseDM::LLHCalcTypeX,
+  static_assert((int)DenseLLH::LLHCalcType == (int)Tomographer::DenseDM::LLHCalcTypeX,
                 "ChannelSpaceMHWalker: The DenseLLH object must have LLHCalcType==LLHCalcTypeX.");
 
   typedef typename ChannelTypes::MatrixType MatrixType;

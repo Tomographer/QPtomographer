@@ -8,16 +8,17 @@ import qutip
 
 
 # A namespace to hold attributes
-class _Ns:
+class _Store:
     def __init__(self, **kwargs):
-        super(Store, self).__init__()
+        super(_Store, self).__init__()
         self.__dict__.update(kwargs)
 
     def _store_items(self):
         return [(k, v) for k, v in self.__dict__.items() if k[:1] != '_']
 
     def __repr__(self):
-        return 'Ns({})'.format([','.join(['{}={}'.format(k,repr(v)) for k,v in self._store_items()])])
+        return '_Store({})'.format([','.join(['{}={}'.format(k,repr(v))
+                                              for k,v in self._store_items()])])
 
     def __str__(self):
         return ', '.join(['{}={}'.format(k, str(v)) for k,v in self._store_items()])
@@ -143,7 +144,7 @@ def simulate_process_measurements(sigma_A, E_AB, Mk_in, Mk_out, num_samples_per_
             # sanity check
             assert np.abs(proboffset-1.0) < 1e-6
 
-    d = _Ns()
+    d = _Store()
     d.Emn = Emn
     d.Nm = np.array(Nm)
     return d
