@@ -33,7 +33,7 @@ dl pre, blockquote pre, li pre {
 div.section > dl > dt {
     margin-top: 1em;
     padding: 0.1em 0px 1em;
-    border-top: solid 0.25em rgba(80,0,0,0.5);
+    border-top: solid 0.25em rgba(0,40,70,0.5);
 }
 
 
