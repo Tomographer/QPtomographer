@@ -183,7 +183,8 @@ struct OurCDataChannelSpace : public CDataBaseType
           movavg_accept_stats,
           logger);
 
-    CtrlConvergedParams<int> stp = CtrlConvergedParams<int>::fromPyDictWithGilAcq(ctrl_converged_params);
+    CtrlConvergedParams<int> stp =
+      CtrlConvergedParams<int>::fromPyDictWithGilAcq(ctrl_converged_params, histogram_params);
 
     auto numsamples_controller =
       Tomographer::mkMHRWValueErrorBinsConvergedController(
