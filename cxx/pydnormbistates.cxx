@@ -181,28 +181,17 @@ struct OurCDataBiStates : public CDataBaseType
           movavg_accept_stats,
           logger);
 
-    std::tuple<int,Eigen::Index,Eigen::Index,Eigen::Index,double> stp =
-      TPY_EXPR_WITH_GIL(
-          std::make_tuple(
-              ctrl_converged_params.attr("get")("check_frequency_sweeps", 1024).cast<int>(),
-              ctrl_converged_params.attr("get")("max_allowed_unknown",
-                                                1+2*histogram_params.num_bins/100).template cast<Eigen::Index>(),
-              ctrl_converged_params.attr("get")("max_allowed_unknown_notisolated",
-                                                1+histogram_params.num_bins/100).template cast<Eigen::Index>(),
-              ctrl_converged_params.attr("get")("max_allowed_not_converged",
-                                                1+histogram_params.num_bins/200).template cast<Eigen::Index>(),
-              ctrl_converged_params.attr("get")("max_add_run_iters", 1.5).cast<double>()
-              ) ) ;
+    CtrlConvergedParams<int> stp = CtrlConvergedParams<int>::fromPyDictWithGilAcq(ctrl_converged_params);
 
     auto numsamples_controller =
       Tomographer::mkMHRWValueErrorBinsConvergedController(
           val_stats_collector,
           logger,
-          std::get<0>(stp), // check_frequency_sweeps
+          stp.check_frequency_sweeps,
           // max allowed: unknown, unk-not-isolated, not-converged
-          std::get<1>(stp), std::get<2>(stp), std::get<3>(stp),
+          stp.max_allowed_unknown, stp.max_allowed_unknown_notisolated, stp.max_allowed_not_converged,
           // max add run iters
-          std::get<4>(stp)
+          stp.max_add_run_iters
           );
 
     auto controllers =

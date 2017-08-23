@@ -189,4 +189,5 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3.6/', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     'qutip': ('http://qutip.org/docs/latest/', None),
+    'tomographer': ('https://tomographer.github.io/tomographer/api-doc/current/html/py/', None),
 }
