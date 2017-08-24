@@ -23,9 +23,23 @@ diamond norm estimation.
 
 .. py:function:: dnormtomo.channelspace.run(...)
 
-   The main execution routine for the bipartite state sampling method.
+   The main execution routine for the bipartite state sampling method.  This function
+   behaves analogously to `tomographer.tomorun.tomorun()`, but in the setting described in
+   |paper_arxiv_ref|.
 
-   Documentation here ...............................................
+   
+
+   Note: POVM effects must be weighted by input state ....... ..........  The
+   log-likelihood function is calculated as
+
+   .. math::
+      \ln\mathcal{L}(\Lambda_{A\to B}\mid E)
+      = \sum_k \texttt{Nm[k]} \cdot \ln \mbox{tr}\bigl(\Lambda_{A\to B}(\Phi_{AP})\,\texttt{Emn[k]}\bigr)\ ,
+
+   where :math:`\left|\Phi\right\rangle_{AP} = \sum_k \left|k\right\rangle_A
+   \left|k\right\rangle_P`.  Hence, ``Emn[k]`` must be equal to :math:`\sigma_{P,j}^{1/2}
+   E \sigma_{P,j}^{1/2}` where :math:`\sigma_{P,j}` is the corresponding transposed input
+   state (see paper, and see the function argument `Emn=` below).
 
    All arguments should be specified as keyword arguments. Accepted arguments are:
 
@@ -33,9 +47,9 @@ diamond norm estimation.
 
       - `dimY`: dimension of output system
 
-      - `Emn`: a list of POVM effects on :math:`X\otimes Y`.  Should be a python list
-        where each item is a POVM effect provided as a complex :math:`d_X d_Y\times d_X
-        d_Y` matrix, of type `NumPy` array.
+      - `Emn`: a list of POVM effects *weighted by input state* on :math:`X\otimes Y`.
+        Should be a python list where each item is a matrix provided as a complex
+        :math:`d_X d_Y\times d_X d_Y` `NumPy` array.
 
       - `Nm`: the corresponding list of frequency counts. This is a list of integers, of
         the same length as `Emn`, where `Nm[k]` is the number of times the outcome
