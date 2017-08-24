@@ -29,23 +29,26 @@ First, edit the file `scs.mk` as follows:
    -lblas`.]
    
 Finally, compile `scs` by running
-```
-> make
-```
+
+    > make
+
 
 
 ## Building and installing `dnormtomo`
 
-Simply run
-```
-> SCS_ROOT=$HOME/Downloads/scs python setup.py install
-```
+You should only have to run
+
+    > SCS_ROOT=$HOME/Downloads/scs python setup.py install
+
 specifying the path where you compiled SCS using the environment variable `SCS_ROOT`.
 
 Or, to install as administrator,
-```
-> sudo -H SCS_ROOT=$HOME/Downloads/scs python setup.py install
-```
+
+    > sudo -H SCS_ROOT=$HOME/Downloads/scs python setup.py install
+
+The good news is that `dnormtomo`'s setup script automatically picks up all the C++ flags
+set for `tomographer` itself, and uses those same flags. Thus, if `tomographer` compiled,
+`dnormtomo` should compile as well (just make sure you use the same compiler).
 
 
 # License

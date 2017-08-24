@@ -1,4 +1,4 @@
 include MANIFEST.in LICENSE.txt README.md VERSION
 include cxx/*.cxx cxx/*.h
-include doc/*.rst doc/_static/custom.css
+include doc/*.rst doc/_static/custom.css doc/conf.py doc/Makefile doc/make.bat
 include setup.py
