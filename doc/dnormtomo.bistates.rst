@@ -8,7 +8,7 @@ This module implements the bipartite state sampling method for the reliable
 diamond norm estimation.
 
 
-.. py:function:: dnormtomo.bistates.run(...)
+.. py:function:: run(...)
 
    The main execution routine for the bipartite state sampling method.  This
    function behaves analogously to :py:func:`tomographer.tomorun.tomorun()`, but
@@ -65,7 +65,8 @@ diamond norm estimation.
         semidefinite program using `SCS <https://github.com/cvxgrp/scs>`_). The
         default is `1e-3`.
 
-      - `num_repeats`: the total number of random walks to run.
+      - `num_repeats`: the total number of random walks to run.  By default,
+        this is set to the number of available cores.
 
       - `binning_num_levels`: number of levels in the binning analysis. By
         default, or if the value `-1` is specified, an appropriate number of
@@ -78,7 +79,7 @@ diamond norm estimation.
 
 
 
-.. py:exception:: dnormtomo.bistates.DNormBiStatesInvalidInputError
+.. py:exception:: DNormBiStatesInvalidInputError
 
    Exception is thrown whenever invalid input to the
    :py:func:`~dnormtomo.bistates.run()` function is encountered.
