@@ -1,0 +1,4 @@
+include MANIFEST.in LICENSE.txt README.md VERSION
+include cxx/*.cxx cxx/*.h
+include doc/*.rst doc/_static/custom.css
+include setup.py

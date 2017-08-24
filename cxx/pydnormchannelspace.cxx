@@ -212,23 +212,7 @@ struct OurCDataChannelSpace : public CDataBaseType
 
 
 
-py::dict tomo_run_dnorm_channels(
-    const int dimX,
-    const int dimY,
-    const py::list& Emn,
-    Eigen::VectorXi Nm,
-    const tpy::HistogramParams& hist_params,
-    const tpy::MHRWParams& mhrw_params,
-    int binning_num_levels,
-    const int num_repeats,
-    py::object ref_channel_XY,
-    py::object progress_fn,
-    const int progress_interval_ms,
-    int channel_walker_jump_mode,
-    const double dnorm_epsilon,
-    py::dict ctrl_step_size_params,
-    py::dict ctrl_converged_params
-    )
+py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
 {
   Tomographer::Logger::LocalLogger<tpy::PyLogger> logger(TOMO_ORIGIN, *pylogger);
 
@@ -238,6 +222,34 @@ py::dict tomo_run_dnorm_channels(
   logger.longdebug("level test: LONGDEBUG");
 
   typedef MyChannelTypes::MatrixType MatrixType;
+
+  auto pop_mandatory_kwarg = [&kwargs](std::string key) -> py::object {
+    if (!kwargs.contains(py::cast(key))) {
+      throw DNormChannelSpaceInvalidInputError("Missing required keyword argument `"+key+"'");
+    }
+    return kwargs.attr("pop")(py::cast(std::move(key)));
+  };
+
+  const int dimX = pop_mandatory_kwarg("dimX").cast<int>();
+  const int dimY = pop_mandatory_kwarg("dimY").cast<int>();
+  py::list Emn = pop_mandatory_kwarg("Emn").cast<py::list>();
+  const Eigen::VectorXi Nm = pop_mandatory_kwarg("Nm").cast<Eigen::VectorXi>();
+  const tpy::HistogramParams hist_params = pop_mandatory_kwarg("hist_params").cast<tpy::HistogramParams>();
+  const tpy::MHRWParams mhrw_params = pop_mandatory_kwarg("mhrw_params").cast<tpy::MHRWParams>();
+  py::object ref_channel_XY = kwargs.attr("pop")("ref_channel_XY"_s, py::none());
+  const double dnorm_epsilon = kwargs.attr("pop")("dnorm_epsilon"_s, 1e-3).cast<double>();
+  const int channel_walker_jump_mode = kwargs.attr("pop")("channel_walker_jump_mode"_s, (int)RandHermExp).cast<int>();
+  int binning_num_levels = kwargs.attr("pop")("binning_num_levels"_s, -1).cast<int>();
+  const int num_repeats = kwargs.attr("pop")("num_repeats"_s, std::thread::hardware_concurrency()).cast<int>();
+  py::object progress_fn = kwargs.attr("pop")("progress_fn"_s, py::none());
+  const int progress_interval_ms = kwargs.attr("pop")("progress_interval_ms"_s, 500).cast<int>();
+  py::dict ctrl_step_size_params = kwargs.attr("pop")("ctrl_step_size_params"_s, py::dict()).cast<py::dict>();
+  py::dict ctrl_converged_params = kwargs.attr("pop")("ctrl_converged_params"_s, py::dict()).cast<py::dict>();
+
+  if (py::len(kwargs)) {
+    throw DNormChannelSpaceInvalidInputError("Unknown extra arguments given: " +
+                                             (", "_s.attr("join")(kwargs.attr("keys")())).cast<std::string>()) ;
+  }
 
   MyChannelTypes dmt(dimX, dimY);
 
@@ -470,21 +482,8 @@ PYBIND11_PLUGIN(channelspace)
   m.def(
       "run", // function name
       &tomo_run_dnorm_channels, // fn pointer
-      py::arg("dimX"),
-      py::arg("dimY"),
-      py::arg("Emn") = py::list(),
-      py::arg("Nm") = Eigen::VectorXi(),
-      py::arg("hist_params") =  tpy::HistogramParams(),
-      py::arg("mhrw_params") = tpy::MHRWParams(),
-      py::arg("binning_num_levels") = -1,
-      py::arg("num_repeats") = std::thread::hardware_concurrency(),
-      py::arg("ref_channel_XY") = py::none(),
-      py::arg("progress_fn") = py::none(),
-      py::arg("progress_interval_ms") = (int)500,
-      py::arg("channel_walker_jump_mode") = (int)RandHermExp,
-      py::arg("dnorm_epsilon") = (double)1e-3,
-      py::arg("ctrl_step_size_params") = py::dict(),
-      py::arg("ctrl_converged_params") = py::dict(),
+      // no positional arguments, all kwargs
+      // docstring
       "Docstring here"
       );
   
