@@ -6,7 +6,11 @@
 Reliable process tomography with dnormtomo
 ==========================================
 
-Welcome to `dnormtomo`'s documentation.
+Welcome to the documentation for `dnormtomo`.
+
+This Python package implements practical and reliable diamond norm estimation to
+any reference channel, given any measurements taken in a quantum process
+tomography procedure, using the method described in |paper_arxiv_ref|.
 
 .. toctree::
    :maxdepth: 2

@@ -86,7 +86,7 @@ todo_include_todos = False
 
 # Epilog for RST files. Useful for defining global substitutions.
 rst_epilog = ur'''
-.. |paper_arxiv_ref| replace:: arXiv:XXXX.XXXXX (TBD)
+.. |paper_arxiv_ref| replace:: [arXiv:XXXX.XXXXX (TBD)]
 '''
 
 
