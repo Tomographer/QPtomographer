@@ -3,7 +3,7 @@
 // dnormtomo.bistates -- Python module for determining the distribution of the diamond
 // norm for reliable quantum process tomography, "naive" version
 //
-// Requires the `tomographer` python package to be installed, version >= 5.0
+// Requires the `tomographer` python package to be installed, version >= 5.3
 //
 
 #include <tomographerpy/common.h>
@@ -75,11 +75,11 @@ typedef std::mt19937 RngType;
 typedef Tomographer::MHRWTasks::ValueHistogramTools::CDataBase<
   ValueCalculator, // our value calculator
   true, // use binning analysis
-  Tomographer::MHWalkerParamsStepSize<tpy::RealType>, // MHWalkerParams
+  Tomographer::MHWalkerParamsStepSize<tpy::RealScalar>, // MHWalkerParams
   RngType::result_type, // RngSeedType
-  tpy::CountIntType, // IterCountIntType
-  tpy::RealType, // CountRealType
-  tpy::CountIntType // HistCountIntType
+  tpy::IterCountIntType, // IterCountIntType
+  tpy::CountRealType, // CountRealType
+  tpy::HistCountIntType // HistCountIntType
   >
   CDataBaseType;
 
@@ -171,7 +171,7 @@ struct OurCDataBiStates : public CDataBaseType
 
     auto val_stats_collector = createValueStatsCollector(logger);
     Tomographer::MHRWMovingAverageAcceptanceRatioStatsCollector<> movavg_accept_stats(
-        TPY_EXPR_WITH_GIL( ctrl_step_size_params.attr("get")("num_samples", 8192).cast<int>() )
+        TPY_EXPR_WITH_GIL( ctrl_step_size_params.attr("get")("num_samples", 8192).cast<IterCountIntType>() )
         );
     auto stats_collectors =
       Tomographer::mkMultipleMHRWStatsCollectors(val_stats_collector, movavg_accept_stats);
@@ -181,8 +181,8 @@ struct OurCDataBiStates : public CDataBaseType
           movavg_accept_stats,
           logger);
 
-    CtrlConvergedParams<int> stp =
-      CtrlConvergedParams<int>::fromPyDictWithGilAcq(ctrl_converged_params, histogram_params);
+    CtrlConvergedParams<IterCountIntType> stp =
+      CtrlConvergedParams<IterCountIntType>::fromPyDictWithGilAcq(ctrl_converged_params, histogram_params);
 
     auto numsamples_controller =
       Tomographer::mkMHRWValueErrorBinsConvergedController(
@@ -310,7 +310,7 @@ py::dict tomo_run_dnorm_bistates(py::kwargs kwargs)
   auto base_seed = std::chrono::system_clock::now().time_since_epoch().count();
 
   binning_num_levels = Tomographer::sanitizeBinningLevels(binning_num_levels, mhrw_params.n_run,
-                                                          tpy::CountIntType(128), logger) ;
+                                                          tpy::IterCountIntType(128), logger) ;
 
   OurCDataBiStates taskcdat(
       llh, valcalc, hist_params, binning_num_levels, mhrw_params, base_seed,

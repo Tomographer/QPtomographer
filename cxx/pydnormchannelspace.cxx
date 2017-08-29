@@ -3,7 +3,7 @@
 // dnormtomo.channelspace -- Python module for determining the distribution of the diamond
 // norm for reliable quantum process tomography
 //
-// Requires the `tomographer` python package to be installed, version >= 5.0
+// Requires the `tomographer` python package to be installed, version >= 5.3
 //
 
 #include <tomographerpy/common.h>
@@ -74,11 +74,11 @@ typedef std::mt19937 RngType;
 typedef Tomographer::MHRWTasks::ValueHistogramTools::CDataBase<
   DNormValueCalculator, // our value calculator
   true, // use binning analysis
-  Tomographer::MHWalkerParamsStepSize<tpy::RealType>, // MHWalkerParams
+  Tomographer::MHWalkerParamsStepSize<tpy::RealScalar>, // MHWalkerParams
   RngType::result_type, // RngSeedType
-  tpy::CountIntType, // IterCountIntType
-  tpy::RealType, // CountRealType
-  tpy::CountIntType // HistCountIntType
+  tpy::IterCountIntType, // IterCountIntType
+  tpy::CountRealType, // CountRealType
+  tpy::HistCountIntType // HistCountIntType
   >
   CDataBaseType;
 
@@ -102,7 +102,7 @@ struct OurCDataChannelSpace : public CDataBaseType
     : CDataBaseType(
         valcalc, hist_params, binning_num_levels,
         MHRWParamsType(
-            tpy::pyMHWalkerParamsFromPyObj<Tomographer::MHWalkerParamsStepSize<tpy::RealType> >(
+            tpy::pyMHWalkerParamsFromPyObj<Tomographer::MHWalkerParamsStepSize<tpy::RealScalar> >(
                 mhrw_params.mhwalker_params
                 ),
             mhrw_params.n_sweep,
@@ -318,7 +318,7 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
   auto base_seed = std::chrono::system_clock::now().time_since_epoch().count();
 
   binning_num_levels = Tomographer::sanitizeBinningLevels(binning_num_levels, mhrw_params.n_run,
-                                                          tpy::CountIntType(128), logger) ;
+                                                          tpy::IterCountIntType(128), logger) ;
 
   OurCDataChannelSpace taskcdat(
       llh, valcalc, hist_params, binning_num_levels, mhrw_params, base_seed,
