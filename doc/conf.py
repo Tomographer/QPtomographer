@@ -56,9 +56,7 @@ author = 'Philippe Faist'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-# The short X.Y version.
-with open('../VERSION', 'r') as f:
-    version = f.read().strip()
+from dnormtomo._version import version
 # The full version, including alpha/beta/rc tags.
 release = version
 

@@ -16,7 +16,7 @@ Some additional utilities are provided in the following module:
 
   - :py:mod:`dnormtomo.util`
 
-
+The package version is exposed as follows.
 
 .. rubric:: Package contents:
 
@@ -25,3 +25,4 @@ Some additional utilities are provided in the following module:
     dnormtomo.channelspace
     dnormtomo.bistates
     dnormtomo.util
+    dnormtomo._members

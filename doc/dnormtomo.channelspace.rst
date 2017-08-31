@@ -8,21 +8,6 @@ Channel-space sampling method: `dnormtomo.channelspace`
 This module implements the channel-space sampling method for the reliable
 diamond norm estimation.
 
-.. py:data:: RandHermExp
-
-   Numerical constant which signifies to carry out the random walk using the
-   ":math:`e^{iH}` jumps mode" (see paper).  This value can be specified to the
-   `channel_walker_jump_mode=` argument of
-   :py:func:`~dnormtomo.channelspace.run()`.
-
-.. py:data:: ElemRotations
-
-   Numerical constant which signifies to carry out the random walk using the
-   "elementary rotations jumps mode" (see paper).  This value can be specified
-   to the `channel_walker_jump_mode=` argument of
-   :py:func:`~dnormtomo.channelspace.run()`.
-
-
 .. py:function:: run(...)
 
    The main execution routine for the channel-space state sampling method.  This
@@ -98,6 +83,20 @@ diamond norm estimation.
         `ctrl_converged_params`: these parameters are treated the same as for
         :py:func:`tomographer.tomorun.tomorun()`.
 
+
+.. py:data:: RandHermExp
+
+   Numerical constant which signifies to carry out the random walk using the
+   ":math:`e^{iH}` jumps mode" (see paper).  This value can be specified to the
+   `channel_walker_jump_mode=` argument of
+   :py:func:`~dnormtomo.channelspace.run()`.
+
+.. py:data:: ElemRotations
+
+   Numerical constant which signifies to carry out the random walk using the
+   "elementary rotations jumps mode" (see paper).  This value can be specified
+   to the `channel_walker_jump_mode=` argument of
+   :py:func:`~dnormtomo.channelspace.run()`.
 
 
 .. py:exception:: DNormChannelSpaceInvalidInputError

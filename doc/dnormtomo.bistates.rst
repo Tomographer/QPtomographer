@@ -65,6 +65,11 @@ diamond norm estimation.
         semidefinite program using `SCS <https://github.com/cvxgrp/scs>`_). The
         default is `1e-3`.
 
+      - `jump_mode`: one of ``"full"`` or ``"light"``, depending on the
+        requested method of random walk step.  This argument has the same effect
+        as the `jumps_method=` argument of
+        py:func:`tomographer.tomorun.tomorun()`.
+
       - `num_repeats`: the total number of random walks to run.  By default,
         this is set to the number of available cores.
 
@@ -75,7 +80,6 @@ diamond norm estimation.
       - `progress_fn`, `progress_interval_ms`, `ctrl_step_size_params`,
         `ctrl_converged_params`: these parameters are treated the same as for
         :py:func:`tomographer.tomorun.tomorun()`.
-
 
 
 

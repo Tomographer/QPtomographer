@@ -525,10 +525,6 @@ PYBIND11_PLUGIN(bistates)
 
   logger.debug("defined the main function") ;
 
-  // type of random walk
-  m.attr("UnifRandUpdate") = py::cast((int)UnifRandUpdate);
-  m.attr("ElemRotations") = py::cast((int)ElemRotations);
-
 
   m.attr("cxxlogger") = pylogger; // ownership is transferred
 
