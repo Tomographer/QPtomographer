@@ -15,12 +15,14 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "C++ flags for relwithd
 
 
 message(WARNING "
-The CMake script is only for development and debugging. To install the
-`dnormtomo` python package, you should use the setup script, e.g.:
-
-  > python setup.py install
-
-Thanks for your cooperation!
+  ============================================================================
+  This CMake script is only intended for development and debugging. To install
+  the `dnormtomo` python package, you should use the setup script, e.g.:
+  
+    > python setup.py install
+  
+  Check out the README file for more information.
+  ============================================================================
 ")
 
 
