@@ -32,11 +32,13 @@
 #include "diamond_norm_figofmerit.h"
 #include "diamond_norm_scs.h"
 
-
-#include "pybind11/pybind11.h"
+#include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
+
+#include "pyutils.h"
+
 
 
 static tpy::PyLogger * pylogger = nullptr;

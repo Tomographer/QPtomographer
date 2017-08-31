@@ -6,6 +6,7 @@
 
 #include <unsupported/Eigen/MatrixFunctions> // matrix exponential
 
+#include <tomographer/tomographer_version.h>
 #include <tomographer/mhrw.h>
 #include <tomographer/densedm/param_herm_x.h>
 #include <tomographer/densedm/indepmeasllh.h>

@@ -26,7 +26,7 @@ First, edit the file `scs.mk` as follows:
    `USE_LAPACK = 1` (needed for solving SDPs).
    
    You might have to adjust or specify the necessary flags for linking to
-   `BLAS/LAPACK` (the variable `BLASLDFLAGS`). [On Mac OS X, use `-framework
+   `BLAS/LAPACK` (the variable `BLASLDFLAGS =`). [On Mac OS X, use `-framework
    Accelerate`; on Ubuntu, install for example `openblas` and use `-llapack
    -lblas`.]
    
