@@ -43,6 +43,14 @@ static tpy::PyLogger * pylogger = nullptr;
 
 
 
+enum BiStatesJumpMode {
+  UnifRandUpdate,
+  ElemRotations,
+};
+
+
+
+
 // define an exception class for invalid inputs
 TOMOGRAPHER_DEFINE_MSG_EXCEPTION(DNormBiStatesInvalidInputError, "Invalid Input: ") ;
 
@@ -93,6 +101,7 @@ struct OurCDataBiStates : public CDataBaseType
 {
   OurCDataBiStates(
       const DenseLLH & llh_, // data from the the tomography experiment
+      BiStatesJumpMode jump_mode_, // the method for random walk jumps -- "full" or "light"
       ValueCalculator valcalc, // the figure-of-merit calculator
       HistogramParams hist_params, // histogram parameters
       int binning_num_levels, // number of binning levels in the binning analysis
@@ -113,12 +122,15 @@ struct OurCDataBiStates : public CDataBaseType
         base_seed
         ),
       llh(llh_),
+      jump_mode(jump_mode_),
       ctrl_step_size_params(ctrl_step_size_params_),
       ctrl_converged_params(ctrl_converged_params_)
   {
   }
 
   const DenseLLH llh;
+
+  const BiStatesJumpMode jump_mode;
 
   const py::dict ctrl_step_size_params;
   const py::dict ctrl_converged_params;
@@ -197,16 +209,50 @@ struct OurCDataBiStates : public CDataBaseType
 
     auto controllers =
       Tomographer::mkMHRWMultipleControllers(therm_step_controller, numsamples_controller);
+    
+    switch (jump_mode) {
+    case UnifRandUpdate:
+      {
+        auto mhwalker = setup_mhwalker<UnifRandUpdate>(llh, rng, logger);
+        run(mhwalker, stats_collectors, controllers);
+        break;
+      }
+    case ElemRotations:
+      {
+        auto mhwalker = setup_mhwalker<ElemRotations>(llh, rng, logger);
+        run(mhwalker, stats_collectors, controllers);
+        break;
+      }
+    default:
+      throw std::runtime_error("Internal error: invalid jump_mode = " + std::to_string((int)jump_mode));
+    }
+  };
 
-    Tomographer::DenseDM::TSpace::LLHMHWalker<DenseLLH,Rng,LoggerType> mhwalker(
+
+  template<int TheJumpMode, typename LLHType, typename RngType, typename LoggerType,
+           TOMOGRAPHER_ENABLED_IF_TMPL(TheJumpMode == (int)UnifRandUpdate)>
+  Tomographer::DenseDM::TSpace::LLHMHWalker<DenseLLH,RngType,LoggerType>
+  setup_mhwalker(LLHType & llh, RngType & rng, LoggerType & logger) const
+  {
+    return Tomographer::DenseDM::TSpace::LLHMHWalker<DenseLLH,RngType,LoggerType>(
 	llh.dmt.initMatrixType(),
 	llh,
 	rng,
 	logger
 	);
- 
-    run(mhwalker, stats_collectors, controllers);
-  };
+  }
+  template<int TheJumpMode, typename LLHType, typename RngType, typename LoggerType,
+           TOMOGRAPHER_ENABLED_IF_TMPL(TheJumpMode == (int)ElemRotations)>
+  Tomographer::DenseDM::TSpace::LLHMHWalkerLight<DenseLLH,RngType,LoggerType>
+  setup_mhwalker(LLHType & llh, RngType & rng, LoggerType & logger) const
+  {
+    return Tomographer::DenseDM::TSpace::LLHMHWalkerLight<DenseLLH,RngType,LoggerType>(
+	llh.dmt.initMatrixType(),
+	llh,
+	rng,
+	logger
+	);
+  }
 
 };
 
@@ -241,6 +287,17 @@ py::dict tomo_run_dnorm_bistates(py::kwargs kwargs)
   const int progress_interval_ms = kwargs.attr("pop")("progress_interval_ms"_s, 500).cast<int>();
   py::dict ctrl_step_size_params = kwargs.attr("pop")("ctrl_step_size_params"_s, py::dict()).cast<py::dict>();
   py::dict ctrl_converged_params = kwargs.attr("pop")("ctrl_converged_params"_s, py::dict()).cast<py::dict>();
+
+  const std::string jumps_method_str = kwargs.attr("pop")("jumps_method"_s, "full"_s).cast<std::string>();
+  BiStatesJumpMode jump_mode;
+  if (jumps_method_str == "light") {
+    jump_mode = ElemRotations;
+  } else if (jumps_method_str == "full") {
+    jump_mode = UnifRandUpdate;
+  } else {
+    throw DNormBiStatesInvalidInputError("Invalid jumps method: '" + jumps_method_str + "'");
+  }
+
 
   if (py::len(kwargs)) {
     throw DNormBiStatesInvalidInputError("Unknown extra arguments given: " +
@@ -301,19 +358,18 @@ py::dict tomo_run_dnorm_bistates(py::kwargs kwargs)
   // ValueCalculator = DiamondNormToRefValueCalculator<DMTypes>
   ValueCalculator valcalc(dmt, mat_ref_channel_XY, dimX, dnorm_epsilon);
 
-
-  // prepare the random walk tasks
-
-  typedef Tomographer::MHRWTasks::MHRandomWalkTask<OurCDataBiStates, RngType>  OurMHRandomWalkTask;
-
   // seed for random number generator
   auto base_seed = std::chrono::system_clock::now().time_since_epoch().count();
 
   binning_num_levels = Tomographer::sanitizeBinningLevels(binning_num_levels, mhrw_params.n_run,
                                                           tpy::IterCountIntType(128), logger) ;
 
+  // prepare the random walk tasks
+
+  typedef Tomographer::MHRWTasks::MHRandomWalkTask<OurCDataBiStates, RngType>  OurMHRandomWalkTask;
+
   OurCDataBiStates taskcdat(
-      llh, valcalc, hist_params, binning_num_levels, mhrw_params, base_seed,
+      llh, jump_mode, valcalc, hist_params, binning_num_levels, mhrw_params, base_seed,
       ctrl_step_size_params, ctrl_converged_params
       );
 
@@ -466,6 +522,11 @@ PYBIND11_PLUGIN(bistates)
       );
 
   logger.debug("defined the main function") ;
+
+  // type of random walk
+  m.attr("UnifRandUpdate") = py::cast((int)UnifRandUpdate);
+  m.attr("ElemRotations") = py::cast((int)ElemRotations);
+
 
   m.attr("cxxlogger") = pylogger; // ownership is transferred
 

@@ -28,18 +28,20 @@ First, edit the file ``scs.mk`` (in the SCS sources) as follows:
    tasks, so avoid double-parallelism which won't speed up anything)
    
  - Search for a line starting with ``USE_LAPACK =``, and make sure that it reads
-   ``USE_LAPACK = 1`` (needed for solving SDPs).  You might have to adjust or
-   specify the necessary flags for linking to `BLAS/LAPACK`. [On Mac OS X, use
-   ``-framework Accelerate``; on Ubuntu, install for example `openblas` and use
-   ``-llapack -lblas``.]
+   ``USE_LAPACK = 1`` (needed for solving SDPs).
+   
+   You might have to adjust or specify the necessary flags for linking to
+   `BLAS/LAPACK` (the variable `BLASLDFLAGS`). [On Mac OS X, use ``-framework
+   Accelerate``; on Ubuntu, install for example `openblas` and use ``-llapack
+   -lblas``.]
    
 Finally, compile `scs` by running::
 
     > make
 
 
-Install `tomographer` and other prerequisites
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Install `tomographer` and its prerequisites
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Make sure you have already installed the `tomographer` package, `as described
 here <https://tomographer.github.io/tomographer/get-started/#python-version>`_.

@@ -109,7 +109,7 @@ def do_analysis(r, name, plots=False):
 
 # # Naive method
 
-# In[5]:
+# In[4]:
 
 
 r_naive = None
@@ -124,15 +124,39 @@ with tomographer.jpyutil.RandWalkProgressBar() as prg:
 print_report(r_naive)
 
 
-# In[15]:
+# In[5]:
 
 
 a_naive = do_analysis(r_naive, 'Naive')
 
 
+# # Naive method, optimized
+
+# In[8]:
+
+
+r_naiveopt = None
+with tomographer.jpyutil.RandWalkProgressBar() as prg:
+    r_naiveopt = dnormtomo.bistates.run(
+        dimX=2, dimY=2, Emn=d.Emn, Nm=np.array(d.Nm),
+        hist_params=tomographer.HistogramParams(0, 0.2, 50),
+        mhrw_params=tomographer.MHRWParams(0.008, 512, 32768, 32768), # thermalize a lot
+        progress_fn=prg.progress_fn,
+        jumps_method='light' # use optimized random walk
+        )
+    prg.displayFinalInfo(r_naiveopt['final_report_runs'])
+print_report(r_naiveopt)
+
+
+# In[9]:
+
+
+a_naiveopt = do_analysis(r_naiveopt, 'Naive, opt.')
+
+
 # # Channel-space methods
 
-# In[5]:
+# In[10]:
 
 
 # we need to encode the input state in the POVM effects
@@ -146,7 +170,7 @@ Emn_for_channelspace = [
 
 # ## Channel-space method with $e^{iH}$ jumps
 
-# In[8]:
+# In[11]:
 
 
 r_eiH = None
@@ -162,7 +186,7 @@ with tomographer.jpyutil.RandWalkProgressBar() as prg:
 print_report(r_eiH)
 
 
-# In[16]:
+# In[12]:
 
 
 a_eiH = do_analysis(r_eiH, 'e^{iH} jumps')
@@ -170,7 +194,7 @@ a_eiH = do_analysis(r_eiH, 'e^{iH} jumps')
 
 # ## Channel-space method with "elementary-rotation" jumps
 
-# In[6]:
+# In[13]:
 
 
 r_elr = None
@@ -186,15 +210,15 @@ with tomographer.jpyutil.RandWalkProgressBar() as prg:
 print_report(r_elr)
 
 
-# In[17]:
+# In[14]:
 
 
 a_elr = do_analysis(r_elr, '"elem. rotation" jumps')
 
 
-# # Grand comparison of the three methods
+# # Grand comparison of all methods
 
-# In[21]:
+# In[15]:
 
 
 def do_comparison_plot(alist, log_scale=False):
@@ -227,12 +251,12 @@ def do_comparison_plot(alist, log_scale=False):
     plt.legend()
     plt.show()
     
-do_comparison_plot([a_naive, a_eiH, a_elr])
+do_comparison_plot([a_naive, a_naiveopt, a_eiH, a_elr])
 
-do_comparison_plot([a_naive, a_eiH, a_elr], log_scale=True)
+do_comparison_plot([a_naive, a_naiveopt, a_eiH, a_elr], log_scale=True)
 
 
-# In[24]:
+# In[17]:
 
 
 def fit_fn_n2(x, a2, a1, m, p, c):

@@ -3,7 +3,7 @@
 Derive quantum error bars for quantum processes in terms of the diamond norm to
 a reference quantum channel.
 
-Thoery: see arXiv:XXXX.XXXXX
+Theory: see arXiv:XXXX.XXXXX
 
 
 ## Installation
@@ -15,16 +15,18 @@ Download (or clone) [SCS](https://github.com/cvxgrp/scs), say to
 
 First, edit the file `scs.mk` as follows:
 
- - Search for a line starting with `CTRLC = `, and make sure it reads `CTRLC =
+ - Search for a line starting with `CTRLC =`, and make sure it reads `CTRLC =
    0` (we will catch Ctrl+C keystrokes ourselves)
    
- - Search for a line starting with `USE_OPENMP = `, and make sure that it reads
+ - Search for a line starting with `USE_OPENMP =`, and make sure that it reads
    `USE_OPENMP = 0` (our invokation of SCS is already within parallel tasks, so
    avoid double-parallelism which won't speed up anything)
    
- - Search for a line starting with `USE_LAPACK = `, and make sure that it reads
-   `USE_LAPACK = 1` (needed for solving SDPs).  You might have to adjust the
-   necessary flags for linking to BLAS/LAPACK. [On Mac OS X, use `-framework
+ - Search for a line starting with `USE_LAPACK =`, and make sure that it reads
+   `USE_LAPACK = 1` (needed for solving SDPs).
+   
+   You might have to adjust or specify the necessary flags for linking to
+   `BLAS/LAPACK` (the variable `BLASLDFLAGS`). [On Mac OS X, use `-framework
    Accelerate`; on Ubuntu, install for example `openblas` and use `-llapack
    -lblas`.]
    
@@ -32,6 +34,11 @@ Finally, compile `scs` by running
 
     > make
 
+
+## Install `tomographer` and its prerequisites
+
+Make sure you have already installed the `tomographer` package, `as described
+here <https://tomographer.github.io/tomographer/get-started/#python-version>`_.
 
 
 ## Building and installing `dnormtomo`
