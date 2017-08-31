@@ -9,7 +9,7 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 
 # test_utils:
 add_executable(test_utils test_utils.cxx)
-set_property(TARGET test_utils PROPERTY CXX_STANDARD 11) # Enable C++11
+#set_property(TARGET test_utils PROPERTY CXX_STANDARD 11) # Enable C++11 -- flags already set by TomographerPy
 target_include_directories(test_utils PUBLIC ${CMAKE_SOURCE_DIR}/cxx) # include our headers to test !
 target_link_libraries(test_utils PRIVATE ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 target_link_libraries(test_utils PRIVATE TomographerPy::TomographerPy)
@@ -19,7 +19,7 @@ add_test(NAME test_utils
 
 # test_diamond_norm:
 add_executable(test_diamond_norm test_diamond_norm.cxx)
-set_property(TARGET test_diamond_norm PROPERTY CXX_STANDARD 11) # Enable C++11
+#set_property(TARGET test_diamond_norm PROPERTY CXX_STANDARD 11) # Enable C++11 -- flags already set by TomographerPy
 target_link_libraries(test_diamond_norm PRIVATE ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 target_include_directories(test_diamond_norm PUBLIC ${CMAKE_SOURCE_DIR}/cxx)
 target_include_directories(test_diamond_norm PUBLIC ${SDPA_INCLUDE_DIRS})
@@ -31,7 +31,7 @@ add_test(NAME test_diamond_norm
 
 # test_channelspace:
 add_executable(test_channelspace test_channelspace.cxx)
-set_property(TARGET test_channelspace PROPERTY CXX_STANDARD 11) # Enable C++11
+#set_property(TARGET test_channelspace PROPERTY CXX_STANDARD 11) # Enable C++11 -- flags already set by TomographerPy
 target_include_directories(test_channelspace PUBLIC ${CMAKE_SOURCE_DIR}/cxx)
 target_link_libraries(test_channelspace PRIVATE TomographerPy::TomographerPy)
 target_link_libraries(test_channelspace PRIVATE ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})

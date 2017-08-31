@@ -56,11 +56,11 @@ struct MyStatsCollector {
 template<int JumpMode_, int LogLevel = Tomographer::Logger::LONGDEBUG>
 struct qubit_to_qutrit_fixture {
   
-  typedef ChannelTypes<> ChannelTypes;
-  typedef ChannelTypes::MatrixType MatrixType;
-  typedef Tomographer::DenseDM::IndepMeasLLH<ChannelTypes> DenseLLH;
+  typedef ChannelTypes<> ChannelTypesType;
+  typedef ChannelTypesType::MatrixType MatrixType;
+  typedef Tomographer::DenseDM::IndepMeasLLH<ChannelTypesType> DenseLLH;
 
-  ChannelTypes cht;
+  ChannelTypesType cht;
   DenseLLH llh;
 
   std::mt19937 rng;
@@ -72,7 +72,7 @@ struct qubit_to_qutrit_fixture {
 
   ChannelSpaceMHWalkerType mhwalker;
 
-  static inline DenseLLH _make_llh(ChannelTypes cht)
+  static inline DenseLLH _make_llh(ChannelTypesType cht)
   {
     DenseLLH llh(cht);
 
