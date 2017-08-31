@@ -29,8 +29,8 @@ except ImportError:
     raise RuntimeError("ERROR: Please install `tomographer` first.")
 # version check
 import tomographer.version
-if tomographer.version.version_info < (5, 0):
-    raise RuntimeError("ERROR: dnormtomo requires `tomographer` >= 5.0. "
+if tomographer.version.version_info < (5, 3):
+    raise RuntimeError("ERROR: dnormtomo requires `tomographer` >= 5.3. "
                        "Please upgrade `tomographer`.")
 
 import tomographer.include # tomographer.include.get_include()
@@ -107,9 +107,7 @@ common_headers = [
 #
 # Read version info
 #
-thisdir = os.path.dirname(os.path.realpath(os.path.abspath(__file__)))
-with open(os.path.join(thisdir, 'VERSION')) as f:
-    version = ensure_str(f.read()).strip()
+from dnormtomo._version import version
 
 
 #
