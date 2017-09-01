@@ -64,5 +64,4 @@ use the same compiler).
 
 # License
 
-XXXXX
-
+`dnormtomo` is released under the MIT License (see `LICENSE.txt`).
