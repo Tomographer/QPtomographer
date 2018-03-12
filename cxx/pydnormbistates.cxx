@@ -498,11 +498,10 @@ py::dict tomo_run_dnorm_bistates(py::kwargs kwargs)
 
 
 
-PYBIND11_PLUGIN(bistates)
+PYBIND11_MODULE(bistates, m)
 {
-  py::module m("bistates",
-               "python interface to run random walk on bipartite states with diamond norm "
-               "fig of merit on encoded channel");
+  m.doc() = "python interface to run random walk on bipartite states with diamond norm "
+    "figure of merit on encoded channel";
 
   // make sure the tomographer module is loaded & initialized
   tpy::import_tomographer();
@@ -538,6 +537,4 @@ PYBIND11_PLUGIN(bistates)
   logger.debug("DNormBiStatesInvalidInputError ...");
 
   py::register_exception<DNormBiStatesInvalidInputError>(m, "DNormBiStatesInvalidInputError");
-    
-  return m.ptr();
 }

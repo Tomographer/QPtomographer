@@ -116,7 +116,6 @@ def simulate_process_measurements(sigma_A, E_AB, Mk_in, Mk_out, num_samples_per_
     Emn = []
     Nm = []
 
-    idx = 0
     for i in range(num_in_settings):
         for j in range(num_out_settings):
 
@@ -146,5 +145,70 @@ def simulate_process_measurements(sigma_A, E_AB, Mk_in, Mk_out, num_samples_per_
 
     d = _Store()
     d.Emn = Emn
+    d.Nm = np.array(Nm)
+    return d
+
+
+
+def simulate_process_prep_measure(E_AB, prep_meas_settings):
+    """
+    Simulate measurements for process tomography using the prepare-and-measure
+    scheme, given a "true" quantum process `E_AB`, a list of input states and
+    measurement settings specified by `prep_meas_settings`.
+
+    The process `E_AB` should be a :py:class:`qutip.Qobj` containing the Choi
+    matrix of the channel being applied, as a :py:class:`qutip.Qobj` matrix (NOT
+    as a superoperator).  It should not be normalized, i.e., we expect
+    :math:`\mathrm{tr}_B(E_AB) == 1_A`.
+
+    The argument `prep_meas_settings` must be a list of tuples `(sigma_in,
+    Mk_out, num_repeats)`, where `sigma_in` is an input state specified as a
+    :py:class:`qutip.Qobj` object, where `Mk_out` is a POVM specified as a list
+    of POVM effects (each POVM effect is a positive semidefinite matrix of norm
+    ≤ 1, and is specified as a :py:class:`qutip.Qobj` matrix), and finally
+    `num_repeats` is the number of times to repeat this setting.
+
+    Returns: an object `d` with properties `d.Emn_ch`, `d.Nm`, representing the
+    arguments suitable for `dnormtomo.channelspace.run()` and the simulated
+    frequency counts.
+    """
+
+    Emn_ch = []
+    Nm = []
+
+    dimA = E_AB.dims[0][0]
+    dimB = E_AB.dims[0][1]
+    dimAB = dimA*dimB
+
+    for (sigma_in, Mk_out, num_repeats) in prep_meas_settings:
+
+        # calculate the output state after sending sigma_in through the process
+        rho_out = (E_AB*qutip.tensor(qutip.partial_transpose(sigma_in, [1]), qutip.qeye(dimB))).ptrace(1)
+
+        # output POVM
+        num_out_effects = len(Mk_out)
+
+        # get some random numbers for this measurement setting
+        x = np.random.rand(num_repeats)
+        proboffset = 0
+
+        # We sample the measurement outcomes as follows: we split the interval
+        # [0,1] in number sections equal to the number of possible outcomes,
+        # each of length = probability of that outcome.  Then, for each possible
+        # outcome, we count the number of random numbers in `x` that fall into
+        # the corresponding section.
+
+        for Mk in Mk_out:
+            p = qutip.expect(Mk, rho_out) # = trace(Mk * rho_out)
+            Emn_ch.append( qutip.tensor(qutip.partial_transpose(sigma_in, [1]), Mk)
+                           .data.toarray().astype(dtype=complex) )
+            Nm.append( np.count_nonzero( (proboffset <= x) & (x < proboffset+p) ) )
+            proboffset += p
+
+        # sanity check
+        assert np.abs(proboffset-1.0) < 1e-6
+
+    d = _Store()
+    d.Emn_ch = Emn_ch
     d.Nm = np.array(Nm)
     return d

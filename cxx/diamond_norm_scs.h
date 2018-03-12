@@ -11,41 +11,9 @@
 
 #include <tomographer/tools/cxxutil.h>
 
-//
-// NOTES: INSTRUCTIONS FOR COMPILING SCS: EDIT YOUR scs-X.Y.Z/scs.mk, AND FIND AND CHANGE
-// THE FOLLOWING VARIABLES TO READ:
-//
-// ...
-// CTRLC = 0
-// ...
-// USE_OPENMP = 0
-// ...
-// USE_LAPACK = 1
-// ...
-//
 
+#include "dnormtomo_use_scs.h"
 
-namespace SCS {
-  extern "C" {
-#   include <scs.h>
-#   include <linSys.h>
-#   include <linsys/amatrix.h>
-  }
-} // namespace SCS
-
-
-
-
-
-namespace tomo_internal {
-inline SCS::scs_int ltrilinindex(SCS::scs_int i, SCS::scs_int j, SCS::scs_int d)
-{
-  assert(i >= j && i < d);
-  // Drafts & Calculations Vol VI ~60% 11/29/2016
-  //return j*(d-j+1) + j*(j-1)/2 + i - j;
-  return d*j - (j*j+j)/2 + i;
-}
-}
 
 
 
@@ -91,7 +59,9 @@ protected:
 private:
   // helpers for the constructor
   
-  inline static constexpr SCS::scs_int total_constraint_dof(SCS::scs_int DimX, SCS::scs_int /*DimY*/, SCS::scs_int DimXY) {
+  inline static constexpr SCS::scs_int total_constraint_dof(SCS::scs_int DimX,
+                                                            SCS::scs_int /*DimY*/,
+                                                            SCS::scs_int DimXY) {
     // number of constraints degrees of freedom = dC1x + dC2x + dC3x = dC1x + dC2x * 2
     return DimX*(2*DimX+1) + DimXY*(2*DimXY+1) * 2;
   }
@@ -136,7 +106,8 @@ private:
 
     data->c = cVec.data();
 
-    // we should probably expose some API to tune these values -- these are hard-coded for now.
+    // we should probably expose some API to tune these values -- these are
+    // hard-coded for now.
     data->stgs = (SCS::Settings*)std::malloc(sizeof(SCS::Settings));
     data->stgs->normalize = 1;
     data->stgs->scale = 5.0;
@@ -161,7 +132,8 @@ public:
       DimXY(copy.DimXY),
       epsilon(copy.epsilon),
       A(copy.A),
-      bVec(copy.bVec), // make sure data is initialized, at least outside of the segment updated in calculate()
+      bVec(copy.bVec), // make sure data is initialized, at least outside of the
+                       // segment updated in calculate()
       cVec(copy.cVec),
       cone(NULL),
       data(NULL),
@@ -196,7 +168,9 @@ public:
       DimXY(other.DimXY),
       epsilon(other.epsilon),
       A(std::move(other.A)),
-      bVec(std::move(other.bVec)), // make sure data is initialized, at least outside of the segment updated in calculate()
+      bVec(std::move(other.bVec)), // make sure data is initialized, at least
+                                   // outside of the segment updated in
+                                   // calculate()
       cVec(std::move(other.cVec)),
       cone(other.cone),
       data(other.data),
@@ -486,15 +460,6 @@ public:
   } // calculate()
 
 }; // class DiamondNormSCSSolver
-
-
-
-
-
-
-
-
-
 
 
 

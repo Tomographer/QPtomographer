@@ -20,74 +20,6 @@
 
 
 
-/** \brief A unitarily invariant random isometry
- *
- * Returns \a N randomly chosen orthogonal vectors packed together into columns of a
- * matrix \a V.  This makes \a V an isometry.
- *
- * The distribution is unitarily invariant, i.e. for any unitary matrix \a U, the outcome
- * \a U*V has the same probability as \a V.
- *
- * \param d the dimension of the space in which to generate random orthogonal vectors
- * \param N the number of orthogonal vectors to generate
- *
- * \param rng a std::random random number generator (such as std::mt19937)
- *
- * \param logger a reference to a logger (\ref pageLoggers) where we can log what we're
- *        doing.
- */
-template<typename MatrixType, typename Rng, typename Logger>
-inline MatrixType randomIsometry(int d, int N, Rng & rng, Logger & baselogger)
-{
-  auto logger = Tomographer::Logger::makeLocalLogger(TOMO_ORIGIN, baselogger);
-
-  logger.longdebug("d=%d, N=%d", d, N);
-  
-  typedef typename MatrixType::Scalar Scalar;
-  //typedef Eigen::Matrix<Scalar, MatrixType::RowsAtCompileTime, 1> VectorType;
-
-  // first, get a matrix of normally distributed random numbers
-  MatrixType V(d,N);
-
-  std::normal_distribution<> normdist(0.0, 1.0);
-  V = Tomographer::Tools::denseRandom<MatrixType>(rng, normdist, V.rows(), V.cols());
-
-  // perform Gram-Schmidt orthogonalization
-
-  for (int j = 0; j < N; ++j) {
-
-    auto v = V.col(j);
-
-    for (int k = 0; k < j; ++k) {
-      auto p = V.col(k).adjoint() * v;
-      v -= p*V.col(k);
-    }
-
-    v /= v.norm();
-  }
-
-  // this should go into a test case
-  tomographer_assert( (V.adjoint()*V - MatrixType::Identity(N,N)).norm() < Eigen::NumTraits<Scalar>::dummy_precision() );
-
-  logger.longdebug([&](std::ostream& str) {
-      str << "randomIsometry: got V = \n" << V << "\n"
-  	  << "Check: V*V.adjoint() ==\n" << V*V.adjoint() << "\n"
-  	  << "Check: V.adjoint()*V ==\n" << V.adjoint()*V;
-    });
-
-  return V;
-}
-
-
-
-
-
-
-
-
-
-
-
 template<typename Scalar = double>
 struct ChannelTypes : public Tomographer::DenseDM::DMTypes<Eigen::Dynamic,Scalar>
 {
@@ -115,32 +47,6 @@ public:
 
 
 
-typedef Eigen::Stride<Eigen::Dynamic,Eigen::Dynamic> DynStride;
-
-template<typename VIsometryType,
-         TOMOGRAPHER_ENABLED_IF_TMPL(!VIsometryType::IsRowMajor)>
-inline Eigen::Map<const Eigen::Matrix<typename VIsometryType::Scalar,Eigen::Dynamic,Eigen::Dynamic,Eigen::ColMajor>,
-                  0,DynStride>
-remapIsometryToT(const VIsometryType & V, int dXY)
-{
-  typedef Eigen::Matrix<typename VIsometryType::Scalar,Eigen::Dynamic,Eigen::Dynamic,Eigen::ColMajor> MatrixType;
-  // we have: V((jkl),i) |i>_A |jkl>_{BA'B'}
-  //
-  // we want: T((ij),(kl)) from V((jkl),i)
-  //
-  // (ij) = i*dJ+j
-  // (jkl) = j*dK*dL+k*dL+l
-  //
-  // matrix is column-major, so:  (jkl),i == i*dJKL+(jkl) == (i*dJ+j)*dKL+(kl)
-  //
-  return Eigen::Map<const MatrixType,0,DynStride >( V.data(), dXY, dXY,
-                                                    DynStride(1,dXY) );
-}
-
-
-
-
-
 enum JumpMode {
   RandHermExp,
   ElemRotations,
@@ -162,7 +68,8 @@ public:
 
   typedef typename DenseLLH::DMTypes ChannelTypes;
 #if TOMOGRAPHER_VERSION_MAJ >= 5
-  typedef typename Tomographer::MHWalkerParamsStepSize<typename ChannelTypes::RealScalar> WalkerParams; // for Tomographer >=5
+  typedef typename Tomographer::MHWalkerParamsStepSize<typename ChannelTypes::RealScalar>
+    WalkerParams; // for Tomographer >=5
 #else
   typedef typename ChannelTypes::RealScalar StepRealType; // for Tomographer <5
 #endif
@@ -398,65 +305,6 @@ public:
 
 
 
-
-
-
-
-template<typename ChannelTypes_, typename DiamondNormSolverType_>
-class DiamondNormToRefChannelSpaceValueCalculator
-  : public virtual Tomographer::Tools::NeedOwnOperatorNew<typename ChannelTypes_::MatrixType>::ProviderType
-{
-public:
-  typedef ChannelTypes_ ChannelTypes;
-  typedef typename ChannelTypes::MatrixType MatrixType;
-  typedef typename ChannelTypes::MatrixTypeConstRef MatrixTypeConstRef;
-
-  typedef DiamondNormSolverType_ DiamondNormSolverType;
-
-  typedef typename DiamondNormSolverType::RealScalarType ValueType;
-
-  inline DiamondNormToRefChannelSpaceValueCalculator(const ChannelTypes dmt, MatrixTypeConstRef E_ref_, int dimX,
-                                                     const double dnorm_epsilon,
-                                                     typename DiamondNormSolverType::BaseLoggerType & logger
-                                                     = Tomographer::Logger::vacuum_logger)
-    : E_ref(E_ref_),
-      dnslv(dimX, dmt.dim()/dimX, dnorm_epsilon, logger)
-  {
-    // make sure that dmt.dim() is indeed divisible by dimX
-    tomographer_assert((int)dimX*dnslv.dimY() == (int)dmt.dim());
-    // and that E_ref is Hermitian
-    tomographer_assert( (E_ref - E_ref.adjoint()).norm()
-                        < dmt.dim()*dmt.dim()*Eigen::NumTraits<typename ChannelTypes::RealScalar>::dummy_precision() );
-  }
-
-  template<typename VIsometryType>
-  inline ValueType getValue(const VIsometryType & Vpt)
-  {
-    tomographer_assert(Vpt.cols() == dnslv.dimX() && Vpt.rows() == dnslv.dimX()*dnslv.dimY()*dnslv.dimY());
-
-    //const int dimX = dnslv.dimX();
-    //const int dimY = dnslv.dimY();
-    const int dimXY = dnslv.dimXY();
-
-    MatrixType T(dimXY,dimXY);
-    T = remapIsometryToT<MatrixType>(Vpt, dimXY);
-
-    const auto E = T * T.adjoint();
-
-    // finally, the difference between the two cpm's.
-    MatrixType Delta(E_ref - E);
-
-    // make sure Delta is hermitian(!)
-    tomographer_assert( (Delta - Delta.adjoint()).norm()
-                        < dimXY*dimXY*Eigen::NumTraits<typename ChannelTypes::RealScalar>::dummy_precision() );
-
-    return dnslv.calculate(Delta);
-  }
-
-private:
-  const MatrixType E_ref;
-  DiamondNormSolverType dnslv;
-};
 
 
 

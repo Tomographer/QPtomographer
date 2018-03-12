@@ -10,6 +10,9 @@
 #include "utils.h"
 
 
+//
+// ValueCalculator for "naive" bipartite state sampling version
+//
 template<typename DMTypes_, typename DiamondNormSolverType_>
 class DiamondNormToRefValueCalculator
   : public virtual Tomographer::Tools::NeedOwnOperatorNew<typename DMTypes_::MatrixType>::ProviderType
@@ -62,6 +65,72 @@ private:
   const MatrixType E_ref;
   DiamondNormSolverType dnslv;
 };
+
+
+
+
+//
+// ValueCalculator for channel-space sampling version
+//
+template<typename ChannelTypes_, typename DiamondNormSolverType_>
+class DiamondNormToRefChannelSpaceValueCalculator
+  : public virtual Tomographer::Tools::NeedOwnOperatorNew<typename ChannelTypes_::MatrixType>::ProviderType
+{
+public:
+  typedef ChannelTypes_ ChannelTypes;
+  typedef typename ChannelTypes::MatrixType MatrixType;
+  typedef typename ChannelTypes::MatrixTypeConstRef MatrixTypeConstRef;
+
+  typedef DiamondNormSolverType_ DiamondNormSolverType;
+
+  typedef typename DiamondNormSolverType::RealScalarType ValueType;
+
+  inline DiamondNormToRefChannelSpaceValueCalculator(
+      const ChannelTypes dmt, MatrixTypeConstRef E_ref_, int dimX,
+      const double dnorm_epsilon,
+      typename DiamondNormSolverType::BaseLoggerType & logger = Tomographer::Logger::vacuum_logger
+      )
+    : E_ref(E_ref_),
+      dnslv(dimX, dmt.dim()/dimX, dnorm_epsilon, logger)
+  {
+    // make sure that dmt.dim() is indeed divisible by dimX
+    tomographer_assert((int)dimX*dnslv.dimY() == (int)dmt.dim());
+    // and that E_ref is Hermitian
+    tomographer_assert( (E_ref - E_ref.adjoint()).norm()
+                        < (dmt.dim()*dmt.dim()*
+                           Eigen::NumTraits<typename ChannelTypes::RealScalar>::dummy_precision()) );
+  }
+
+  template<typename VIsometryType>
+  inline ValueType getValue(const VIsometryType & Vpt)
+  {
+    tomographer_assert(Vpt.cols() == dnslv.dimX() && Vpt.rows() == dnslv.dimX()*dnslv.dimY()*dnslv.dimY());
+
+    //const int dimX = dnslv.dimX();
+    //const int dimY = dnslv.dimY();
+    const int dimXY = dnslv.dimXY();
+
+    MatrixType T(dimXY,dimXY);
+    T = remapIsometryToT<MatrixType>(Vpt, dimXY);
+
+    const auto E = T * T.adjoint();
+
+    // finally, the difference between the two cpm's.
+    MatrixType Delta(E_ref - E);
+
+    // make sure Delta is hermitian(!)
+    tomographer_assert( (Delta - Delta.adjoint()).norm()
+                        < dimXY*dimXY*Eigen::NumTraits<typename ChannelTypes::RealScalar>::dummy_precision() );
+
+    return dnslv.calculate(Delta);
+  }
+
+private:
+  const MatrixType E_ref;
+  DiamondNormSolverType dnslv;
+};
+
+
 
 
 

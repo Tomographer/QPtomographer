@@ -3,7 +3,7 @@
 // dnormtomo.channelspace -- Python module for determining the distribution of the diamond
 // norm for reliable quantum process tomography
 //
-// Requires the `tomographer` python package to be installed, version >= 5.3
+// Requires the `tomographer` python package to be installed, version >= 5.4
 //
 
 #include <tomographerpy/common.h>
@@ -454,10 +454,9 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
 
 
 
-PYBIND11_PLUGIN(channelspace)
+PYBIND11_MODULE(channelspace, m)
 {
-  py::module m("channelspace",
-               "Python interface to run channel space random walk with diamond norm fig of merit");
+  m.doc() = "Python interface to run channel space random walk with diamond norm fig of merit";
 
   // make sure the tomographer module is loaded & initialized
   tpy::import_tomographer();
@@ -493,6 +492,4 @@ PYBIND11_PLUGIN(channelspace)
   logger.debug("DNormChannelSpaceInvalidInputError ...");
   
   py::register_exception<DNormChannelSpaceInvalidInputError>(m, "DNormChannelSpaceInvalidInputError");
-    
-  return m.ptr();
 }
