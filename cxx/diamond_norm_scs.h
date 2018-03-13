@@ -389,8 +389,9 @@ public:
   inline SCS::scs_int dimY() const { return DimY; }
   inline SCS::scs_int dimXY() const { return DimXY; }
 
-  RealScalarType calculate(const Eigen::Ref<const Eigen::Matrix<ComplexScalarType,
-                           Eigen::Dynamic,Eigen::Dynamic> > & Delta)
+  RealScalarType calculate(
+      const Eigen::Ref<const Eigen::Matrix<ComplexScalarType,Eigen::Dynamic,Eigen::Dynamic> > & Delta
+      )
   {
     auto logger = _logger.subLogger(TOMO_ORIGIN);
   

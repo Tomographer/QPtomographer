@@ -13,6 +13,7 @@
 #include <tomographer/densedm/indepmeasllh.h>
 #include <tomographer/densedm/tspacellhwalker.h>
 #include <tomographer/densedm/tspacefigofmerit.h>
+#include <tomographer/valuecalculator.h>
 #include <tomographer/mhrw.h>
 #include <tomographer/mhrwtasks.h>
 #include <tomographer/multiproc.h>
@@ -31,6 +32,7 @@
 
 #include "diamond_norm_figofmerit.h"
 #include "diamond_norm_scs.h"
+#include "entglfidelity_figofmerit.h"
 
 #include <pybind11/pybind11.h>
 
@@ -72,12 +74,42 @@ typedef Tomographer::DenseDM::IndepMeasLLH<DMTypes> DenseLLH;
 
 
 //
-// Our value calculator will simply be our DiamondNormToRefValueCalculator.
+// The ValueCalculators -- use a MultiplexorValueCalculator to choose at
+// run-time between a DiamondNormToRefValueCalculator, a
+// EntglFidelityValueCalculator and a
+// CallableValueCalculators (py callback)
 //
+
+class CallableValueCalculator
+{
+public:
+  typedef tpy::RealScalar ValueType;
+  
+  CallableValueCalculator(py::object fn_) : fn(fn_) { }
+
+  tpy::RealScalar getValue(const DMTypes::MatrixType & T) const
+  {
+    py::gil_scoped_acquire gil_acquire;
+    return fn(py::cast(T)).cast<tpy::RealScalar>();
+  }
+
+private:
+  py::object fn;
+};
+
 typedef DiamondNormToRefValueCalculator<
   DMTypes,
   DiamondNormSCSSolver<typename DMTypes::RealScalar>
-  > ValueCalculator;
+  >
+  DNormToRefValueCalculator;
+
+typedef Tomographer::MultiplexorValueCalculator<
+  tpy::RealScalar, // value type first, then:
+  DNormToRefValueCalculator,
+  EntglFidelityValueCalculator<DMTypes>,
+  CallableValueCalculator
+  >
+  ValueCalculator;
 
 
 typedef std::mt19937 RngType;
@@ -281,6 +313,7 @@ py::dict tomo_run_dnorm_bistates(py::kwargs kwargs)
   const Eigen::VectorXi Nm = pop_mandatory_kwarg("Nm").cast<Eigen::VectorXi>();
   const tpy::HistogramParams hist_params = pop_mandatory_kwarg("hist_params").cast<tpy::HistogramParams>();
   const tpy::MHRWParams mhrw_params = pop_mandatory_kwarg("mhrw_params").cast<tpy::MHRWParams>();
+  py::object fig_of_merit = kwargs.attr("pop")("fig_of_merit"_s, py::none());
   py::object ref_channel_XY = kwargs.attr("pop")("ref_channel_XY"_s, py::none());
   const double dnorm_epsilon = kwargs.attr("pop")("dnorm_epsilon"_s, 1e-3).cast<double>();
   int binning_num_levels = kwargs.attr("pop")("binning_num_levels"_s, -1).cast<int>();
@@ -336,29 +369,66 @@ py::dict tomo_run_dnorm_bistates(py::kwargs kwargs)
   //
   DMTypes::MatrixType mat_ref_channel_XY = DMTypes::MatrixType::Zero(dimXY, dimXY);
 
-  if (ref_channel_XY.is_none()) {
-    // if None is given, then use the unnormalized maximally entangled state = Choi matrix
-    // of the identity channel.  (|Phi> = \sum_k |kk>)
-    if (dimX != dimY) {
-      // but this can only be done if dimX==dimY
-      throw DNormBiStatesInvalidInputError("You must specify a reference channel ref_channel_XY if dimX != dimY");
-    }
-    for (int k = 0; k < dimX; ++k) {
-      for (int k2 = 0; k2 < dimX; ++k2) {
-        mat_ref_channel_XY(k + dimX*k, k2 + dimX*k2) = 1;
-      }
-    }
+  int fig_of_merit_multiplexor_idx = 0;
+
+  if (fig_of_merit.is_none() || fig_of_merit.attr("__eq__")("diamond-distance"_s).cast<bool>()) {
+
+    // diamond norm distance, the default
+
+    fig_of_merit_multiplexor_idx = 0;
+
+    mat_ref_channel_XY =
+      get_ref_channel<DMTypes::MatrixType, DNormBiStatesInvalidInputError>(
+          dimX, dimY, ref_channel_XY
+          );
+
+    logger.debug([&](std::ostream & stream) {
+        stream << "Using diamond norm as figure of merit, with ref_channel_XY =\n" << mat_ref_channel_XY;
+      });
+
+  } else if (fig_of_merit.attr("__eq__")("entanglement-fidelity"_s).cast<bool>()) {
+
+    // use entanglement fidelity, the second possibility
+    fig_of_merit_multiplexor_idx = 1;
+
+    logger.debug([&](std::ostream & stream) {
+        stream << "Using entanglement fidelity as figure of merit";
+      });
+
+  } else if (py::hasattr(fig_of_merit, "__call__"_s)) {
+
+    // got a callable as argument, the third possibility
+    fig_of_merit_multiplexor_idx = 2;
+
+    logger.debug([&](std::ostream & stream) {
+        stream << "Using custom callable as figure of merit";
+      });
+
   } else {
-    // extract an Eigen::Matrix from the python object
-    mat_ref_channel_XY = ref_channel_XY.cast<DMTypes::MatrixType>();
+
+    throw DNormBiStatesInvalidInputError(
+            "Invalid value for `fig_of_merit' argument (see documentation)"
+            );
+
   }
 
-  logger.debug([&](std::ostream & stream) {
-      stream << "Using the reference channel ref_channel_XY =\n" << mat_ref_channel_XY;
-    });
+  ValueCalculator valcalc(
+      fig_of_merit_multiplexor_idx,
+      // creator function for DNormChannelSpaceValueCalculator:
+      [dmt,mat_ref_channel_XY,dimX,dnorm_epsilon]() {
+        // do NOT give a pylogger here, it's not thread-safe.
+        return new DNormToRefValueCalculator(dmt, mat_ref_channel_XY, dimX, dnorm_epsilon);
+      },
+      // creator function for EntanglmentFidelityChannelSpaceValueCalculator:
+      [dmt,dimX]() {
+        return new EntglFidelityValueCalculator<DMTypes>(dmt, dimX);
+      },
+      // creator function for CallableChannelSpaceValueCalculator:
+      [fig_of_merit]() {
+        return new CallableValueCalculator(fig_of_merit);
+      }
+      ) ;
 
-  // ValueCalculator = DiamondNormToRefValueCalculator<DMTypes>
-  ValueCalculator valcalc(dmt, mat_ref_channel_XY, dimX, dnorm_epsilon);
 
   // seed for random number generator
   auto base_seed = std::chrono::system_clock::now().time_since_epoch().count();

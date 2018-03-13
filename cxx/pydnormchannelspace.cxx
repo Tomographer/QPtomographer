@@ -68,6 +68,12 @@ typedef Tomographer::DenseDM::IndepMeasLLH<MyChannelTypes> DenseLLH;
 
 
 
+//
+// The ValueCalculators -- use a MultiplexorValueCalculator to choose at
+// run-time between a DiamondNormToRefChannelSpaceValueCalculator, a
+// EntglFidelityChannelSpaceValueCalculator and a
+// CallableChannelSpaceValueCalculators (py callback)
+//
 
 class CallableChannelSpaceValueCalculator
 {
@@ -325,24 +331,10 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
 
     fig_of_merit_multiplexor_idx = 0;
 
-    if (ref_channel_XY.is_none()) {
-      // if None is given, then use the unnormalized maximally entangled state = Choi matrix
-      // of the identity channel.  (|Phi> = \sum_k |kk>)
-      if (dimX != dimY) {
-        // but this can only be done if dimX==dimY
-        throw DNormChannelSpaceInvalidInputError(
-            "You must specify a reference channel ref_channel_XY if dimX != dimY"
-            );
-      }
-      for (int k = 0; k < dimX; ++k) {
-        for (int k2 = 0; k2 < dimX; ++k2) {
-          mat_ref_channel_XY(k + dimX*k, k2 + dimX*k2) = 1;
-        }
-      }
-    } else {
-      // extract an Eigen::Matrix from the python object
-      mat_ref_channel_XY = ref_channel_XY.cast<MyChannelTypes::MatrixType>();
-    }
+    mat_ref_channel_XY =
+      get_ref_channel<MyChannelTypes::MatrixType, DNormChannelSpaceInvalidInputError>(
+          dimX, dimY, ref_channel_XY
+          );
 
     logger.debug([&](std::ostream & stream) {
         stream << "Using diamond norm as figure of merit, with ref_channel_XY =\n" << mat_ref_channel_XY;

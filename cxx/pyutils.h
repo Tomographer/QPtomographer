@@ -55,6 +55,40 @@ struct CtrlConvergedParams
 };
 
 
+template<typename MatrixType, typename ExceptionClass>
+MatrixType get_ref_channel(const int dimX, const int dimY, py::object ref_channel_XY)
+{
+  // return the reference channel as specified by the python argument
+  // ref_channel_XY; handle the case = None by defaulting to the identity
+  // channel (only for dimX == dimY)
+
+  if (ref_channel_XY.is_none()) {
+
+    // if None is given, then use the unnormalized maximally entangled state = Choi matrix
+    // of the identity channel.  (|Phi> = \sum_k |kk>)
+
+    if (dimX != dimY) {
+      // but this can only be done if dimX==dimY
+      throw ExceptionClass(
+          "You must specify a reference channel ref_channel_XY if dimX != dimY"
+          );
+    }
+
+    MatrixType mat_ref_channel_XY(dimX*dimX,dimX*dimX);
+    
+    for (int k = 0; k < dimX; ++k) {
+      for (int k2 = 0; k2 < dimX; ++k2) {
+        mat_ref_channel_XY(k + dimX*k, k2 + dimX*k2) = 1;
+      }
+    }
+
+    return mat_ref_channel_XY;
+  }
+
+  // extract an Eigen::Matrix from the python object
+  return ref_channel_XY.cast<MatrixType>();
+}
+
 
 #endif
 
