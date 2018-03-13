@@ -319,9 +319,9 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
 
   int fig_of_merit_multiplexor_idx = 0;
 
-  if (fig_of_merit.is_none() || fig_of_merit.attr("__eq__")("diamond-norm"_s)) {
+  if (fig_of_merit.is_none() || fig_of_merit.attr("__eq__")("diamond-distance"_s).cast<bool>()) {
 
-    // diamond norm, the default
+    // diamond norm distance, the default
 
     fig_of_merit_multiplexor_idx = 0;
 
@@ -348,7 +348,7 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
         stream << "Using diamond norm as figure of merit, with ref_channel_XY =\n" << mat_ref_channel_XY;
       });
 
-  } else if (fig_of_merit.attr("__eq__")("entanglement-fidelity"_s)) {
+  } else if (fig_of_merit.attr("__eq__")("entanglement-fidelity"_s).cast<bool>()) {
 
     // use entanglement fidelity, the second possibility
     fig_of_merit_multiplexor_idx = 1;
