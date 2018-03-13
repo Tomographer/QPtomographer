@@ -72,7 +72,7 @@ public:
   }
 
   template<typename VIsometryType>
-  inline ValueType getValue(const VIsometryType & Vpt)
+  inline ValueType getValue(const VIsometryType & Vpt) const
   {
     // TODO: act on & use only triangular part for taking the partial trace
 

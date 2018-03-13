@@ -28,6 +28,13 @@ struct ChannelTypes : public Tomographer::DenseDM::DMTypes<Eigen::Dynamic,Scalar
   using typename Base::RealScalar;
   using typename Base::ComplexScalar;
 
+  /** \brief Type of the V isometry corresponding to a Stinespring dilation of
+   *         the channel
+   *
+   * We fix the dimensions to by Dynamic for convenience.
+   */
+  typedef Eigen::Matrix<ComplexScalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> VIsometryType;
+
 private:
   std::size_t dim_x;
   std::size_t dim_y;
@@ -88,7 +95,7 @@ public:
   typedef typename ChannelTypes::ComplexScalar ComplexScalar;
 
   //! Type of the V isometry which will be the point type.
-  typedef Eigen::Matrix<ComplexScalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> VIsometryType;
+  typedef typename ChannelTypes::VIsometryType VIsometryType;
   typedef VIsometryType PointType;
 
 private:
