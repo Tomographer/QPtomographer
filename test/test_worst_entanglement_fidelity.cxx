@@ -106,7 +106,8 @@ BOOST_FIXTURE_TEST_CASE(simple_qubit, identdefs<2>)
     0,   0, 0, 1;
 
   Tomographer::Logger::BoostTestLogger logger(Tomographer::Logger::LONGDEBUG) ;
-  WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> fidslv(2, 1e-8, E, logger);
+  typedef WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> Solver;
+  Solver fidslv(2, Solver::factorizeChoiMatrix(E), 1e-8, logger);
 
   double fid = fidslv.calculate();
 
@@ -133,7 +134,8 @@ BOOST_FIXTURE_TEST_CASE(qutrit_case, identdefs<3>)
   0.2,  0,  0,  0,0.8,  0,  0,  0,  1 ;
   
   Tomographer::Logger::BoostTestLogger logger(Tomographer::Logger::LONGDEBUG) ;
-  WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> fidslv(3, 1e-7, E, logger);
+  typedef WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> Solver;
+  Solver fidslv(3, Solver::factorizeChoiMatrix(E), 1e-7, logger);
 
   double fid = fidslv.calculate();
 
@@ -158,7 +160,8 @@ BOOST_FIXTURE_TEST_CASE(qutrit_case_close, identdefs<3>)
     0.9,0,  0,  0,0.9,  0,  0,  0,  1 ;
   
   Tomographer::Logger::BoostTestLogger logger(Tomographer::Logger::LONGDEBUG) ;
-  WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> fidslv(3, 1e-7, E, logger);
+  typedef WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> Solver;
+  Solver fidslv(3, Solver::factorizeChoiMatrix(E), 1e-7, logger);
 
   double fid = fidslv.calculate();
 
@@ -184,7 +187,8 @@ BOOST_FIXTURE_TEST_CASE(qutrit_case_ideal, identdefs<3>)
     1,  0,  0,  0,  1,  0,  0,  0,  1 ;
   
   Tomographer::Logger::BoostTestLogger logger(Tomographer::Logger::LONGDEBUG) ;
-  WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> fidslv(3, 1e-7, E, logger);
+  typedef WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> Solver;
+  Solver fidslv(3, Solver::factorizeChoiMatrix(E), 1e-7, logger);
 
   double fid = fidslv.calculate();
 
@@ -194,7 +198,6 @@ BOOST_FIXTURE_TEST_CASE(qutrit_case_ideal, identdefs<3>)
 
 BOOST_AUTO_TEST_SUITE_END(); // examples
 
-/*
 BOOST_FIXTURE_TEST_SUITE(worst_entanglement_fidelity_valcalc, identdefs<2>)
 
 BOOST_FIXTURE_TEST_CASE(simple_qubit, identdefs<2>)
@@ -212,10 +215,10 @@ BOOST_FIXTURE_TEST_CASE(simple_qubit, identdefs<2>)
   typedef Tomographer::DenseDM::DMTypes<4> DMTypes;
   DMTypes dmt(4);
 
-  EntglFidelityValueCalculator<DMTypes> efidcalc(dmt,2);
+  WorstEntglFidelityValueCalculator<DMTypes> wefidcalc(dmt, 2, 1e-8);
 
   // value calculated manually
-  BOOST_CHECK_CLOSE( efidcalc.getValue(T), 0.475, 1e-4/ *percent* / );
+  BOOST_CHECK_CLOSE( wefidcalc.getValue(T), 1-1./1.9, 1e-4/*percent*/ );
 }
 
 
@@ -225,30 +228,28 @@ BOOST_FIXTURE_TEST_CASE(simple_qubit_channelspace, identdefs<2>)
   //
   // Here we need a Stinespring isometry:
   //
-  //   |0>  -->  sqrt(0.9) * |0>_out |0>_ref + sqrt(0.1) * |1>_out |0>_ref
-  //   |1>  -->  |1>_out |1>_ref
+  //   |0>  -->  sqrt(0.9) * |0>_out |0>_ref + sqrt(0.1) * |1>_out |1>_ref
+  //   |1>  -->  |1>_out |2>_ref
   //
-  // ref actually has four dimensions (that's what's needed in general) but we
-  // don't need all of them for this particular channel.
 
   Eigen::Matrix<std::complex<double>,8,2> Vpt;
   Vpt.col(0)
-    << std::sqrt(0.9),0,0,0, std::sqrt(0.1),0,0,0 ;
+    << std::sqrt(0.9),0,0,0, 0,std::sqrt(0.1),0,0 ;
   Vpt.col(1)
-    << 0,0,0,0, 0,1.0,0,0 ;
+    << 0,0,0,0, 0,0,1.0,0 ;
 
   typedef ChannelTypes<double> MyChannelTypes;
   MyChannelTypes cht(2,2);
 
-  EntglFidelityChannelSpaceValueCalculator<MyChannelTypes> efidcalc(cht);
+  WorstEntglFidelityChannelSpaceValueCalculator<MyChannelTypes> wefidcalc(cht, 1e-8);
 
   // value calculated manually
-  BOOST_CHECK_CLOSE( efidcalc.getValue(Vpt), 0.475, 1e-4/ *percent* / );
+  BOOST_CHECK_CLOSE( wefidcalc.getValue(Vpt), 1.-1./1.9, 1e-4/*percent*/ );
 }
 
 BOOST_AUTO_TEST_SUITE_END() ;
 
-*/
+
 
 // =============================================================================
 BOOST_AUTO_TEST_SUITE_END() ;

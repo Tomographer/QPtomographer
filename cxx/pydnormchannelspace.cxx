@@ -33,6 +33,7 @@
 #include "diamond_norm_figofmerit.h"
 #include "diamond_norm_scs.h"
 #include "entglfidelity_figofmerit.h"
+#include "worstentglfidelity_figofmerit.h"
 
 #include "channelspace.h"
 
@@ -71,8 +72,9 @@ typedef Tomographer::DenseDM::IndepMeasLLH<MyChannelTypes> DenseLLH;
 //
 // The ValueCalculators -- use a MultiplexorValueCalculator to choose at
 // run-time between a DiamondNormToRefChannelSpaceValueCalculator, a
-// EntglFidelityChannelSpaceValueCalculator and a
-// CallableChannelSpaceValueCalculators (py callback)
+// EntglFidelityChannelSpaceValueCalculator, a
+// WorstEntglFidelityChannelSpaceValueCalculator, and a
+// CallableChannelSpaceValueCalculators (any python callback)
 //
 
 class CallableChannelSpaceValueCalculator
@@ -102,6 +104,7 @@ typedef Tomographer::MultiplexorValueCalculator<
   tpy::RealScalar, // value type first, then:
   DNormChannelSpaceValueCalculator,
   EntglFidelityChannelSpaceValueCalculator<MyChannelTypes>,
+  WorstEntglFidelityChannelSpaceValueCalculator<MyChannelTypes>,
   CallableChannelSpaceValueCalculator
   >
   MyValueCalculator;
@@ -276,7 +279,7 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
   const tpy::MHRWParams mhrw_params = pop_mandatory_kwarg("mhrw_params").cast<tpy::MHRWParams>();
   py::object fig_of_merit = kwargs.attr("pop")("fig_of_merit"_s, py::none());
   py::object ref_channel_XY = kwargs.attr("pop")("ref_channel_XY"_s, py::none());
-  const double dnorm_epsilon = kwargs.attr("pop")("dnorm_epsilon"_s, 1e-3).cast<double>();
+  const double sdp_epsilon = kwargs.attr("pop")("sdp_epsilon"_s, 1e-3).cast<double>();
   const int channel_walker_jump_mode = kwargs.attr("pop")("channel_walker_jump_mode"_s, (int)RandHermExp).cast<int>();
   int binning_num_levels = kwargs.attr("pop")("binning_num_levels"_s, -1).cast<int>();
   const int num_repeats = kwargs.attr("pop")("num_repeats"_s, std::thread::hardware_concurrency()).cast<int>();
@@ -349,10 +352,19 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
         stream << "Using entanglement fidelity as figure of merit";
       });
 
+  } else if (fig_of_merit.attr("__eq__")("worst-entanglement-fidelity"_s).cast<bool>()) {
+
+    // use entanglement fidelity, the second possibility
+    fig_of_merit_multiplexor_idx = 2;
+
+    logger.debug([&](std::ostream & stream) {
+        stream << "Using entanglement fidelity as figure of merit";
+      });
+
   } else if (py::hasattr(fig_of_merit, "__call__"_s)) {
 
     // got a callable as argument, the third possibility
-    fig_of_merit_multiplexor_idx = 2;
+    fig_of_merit_multiplexor_idx = 3;
 
     logger.debug([&](std::ostream & stream) {
         stream << "Using custom callable as figure of merit";
@@ -369,13 +381,17 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
   MyValueCalculator valcalc(
       fig_of_merit_multiplexor_idx,
       // creator function for DNormChannelSpaceValueCalculator:
-      [dmt,mat_ref_channel_XY,dimX,dnorm_epsilon]() {
+      [dmt,mat_ref_channel_XY,dimX,sdp_epsilon]() {
         // do NOT give a pylogger here, it's not thread-safe.
-        return new DNormChannelSpaceValueCalculator(dmt, mat_ref_channel_XY, dimX, dnorm_epsilon);
+        return new DNormChannelSpaceValueCalculator(dmt, mat_ref_channel_XY, dimX, sdp_epsilon);
       },
       // creator function for EntanglmentFidelityChannelSpaceValueCalculator:
       [dmt]() {
         return new EntglFidelityChannelSpaceValueCalculator<MyChannelTypes>(dmt);
+      },
+      // creator function for EntanglmentFidelityChannelSpaceValueCalculator:
+      [dmt,sdp_epsilon]() {
+        return new WorstEntglFidelityChannelSpaceValueCalculator<MyChannelTypes>(dmt, sdp_epsilon);
       },
       // creator function for CallableChannelSpaceValueCalculator:
       [fig_of_merit]() {

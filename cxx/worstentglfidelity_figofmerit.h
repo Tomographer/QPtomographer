@@ -211,8 +211,9 @@ public:
 
   
   WorstEntglFidelitySCSSolver(
-      const SCS::scs_int sysDimX, const SCS::scs_float epsilon_,
-      const Eigen::Ref<const Eigen::Matrix<ComplexScalarType,Eigen::Dynamic,Eigen::Dynamic> > & E_YR,
+      const SCS::scs_int sysDimX,
+      const Eigen::Ref<const Eigen::Matrix<ComplexScalarType,Eigen::Dynamic,Eigen::Dynamic> > & M_YR,
+      const SCS::scs_float epsilon_,
       BaseLoggerType & baselogger
       )
     : DimX(sysDimX),
@@ -232,27 +233,6 @@ public:
     auto logger = _logger.subLogger(TOMO_ORIGIN);
     logger.debug("Constructing worst-case entanglement fidelity SCS solver.");
 
-    // factorize E_YR into M*M'
-
-    Eigen::LDLT<MatrixType> E_YR_ldlt(E_YR);
-    MatrixType MM(E_YR.rows(), E_YR.cols()); // M = P^T * L * \sqrt{D}
-    MM.setZero();
-    MM = E_YR_ldlt.vectorD().array().sqrt().matrix().asDiagonal();
-    MM = E_YR_ldlt.matrixL() * MM;
-    MM = E_YR_ldlt.transpositionsP().transpose() * MM;
-
-    // std::cerr << "DEBUG ACTIVATED USING SQRTM...\n";
-    // MatrixType MM = MatrixType(E_YR).sqrt();
-
-    logger.longdebug([&](std::ostream & stream) {
-        stream << "Calculating the worst-case entanglement fidelity of E_YR =\n" << E_YR << "\n"
-               << " ... factorized as M*M' with M =\n" << MM << "\n"
-               // << " ... L = \n" << MatrixType(E_YR_ldlt.matrixL()) << "\n ... D = \n"
-               // << E_YR_ldlt.vectorD() << "\n ... P = " << E_YR_ldlt.transpositionsP().indices() << "\n"
-               << " ... M*M' = \n" << MM*MM.adjoint();
-      });
-
-    tomographer_assert( (E_YR - MM*MM.adjoint()).norm() < 1e-5 ) ;
 
     // allocate SCS structures
     cone = (SCS::Cone*)std::calloc(1, sizeof(SCS::Cone));
@@ -403,8 +383,8 @@ public:
     // first place the diagonal elements rho(k,k) where they belong in A
     for (k = 0; k < dvzRdiag; ++k) {
       for (ij = 0; ij < DimXX; ++ij) {
-        auto const valR = SQRT2*MM(DimX*k+k,ij).real();
-        auto const valI = SQRT2*MM(DimX*k+k,ij).imag();
+        auto const valR = SQRT2*M_YR(DimX*k+k,ij).real();
+        auto const valI = SQRT2*M_YR(DimX*k+k,ij).imag();
         // "-Re(<\rho|M^\dagger)" at (DimXX,0:DimXX) in PSD constraint matrix
         AT.push_back(TT(con_offset_2+ltrilinindex(DimXX, ij, dC2), var_zRdiag_offset+k, -valR));
         // "-Re(<\rho|M^\dagger)" at (1+2*DimXX,1+DimXX:1+2*DimXX) in PSD constraint matrix
@@ -423,10 +403,10 @@ public:
         // iteration (ij) over corresponding row/column in PSD constraint where
         // we have to encode "Re(M vec(rho))" or "Im(M vec(rho))"
         for (ij = 0; ij < DimXX; ++ij) {
-          const auto valR  = SQRT2*MM(DimX*ip+jp,ij).real(); // Re[M]_{(i'j'),(ij)}
-          const auto valRt = SQRT2*MM(DimX*jp+ip,ij).real(); // Re[M]_{(j'i'),(ij)}
-          const auto valI  = SQRT2*MM(DimX*ip+jp,ij).imag();
-          const auto valIt = SQRT2*MM(DimX*jp+ip,ij).imag();
+          const auto valR  = SQRT2*M_YR(DimX*ip+jp,ij).real(); // Re[M]_{(i'j'),(ij)}
+          const auto valRt = SQRT2*M_YR(DimX*jp+ip,ij).real(); // Re[M]_{(j'i'),(ij)}
+          const auto valI  = SQRT2*M_YR(DimX*ip+jp,ij).imag();
+          const auto valIt = SQRT2*M_YR(DimX*jp+ip,ij).imag();
           // "-Re(<\rho|M^\dagger)" at (DimXX,0:DimXX) in PSD constraint matrix
           AT.push_back(TT(con_offset_2 + ltrilinindex(DimXX, ij, dC2), var_zRtri_offset+trivarno, -valR-valRt));
           AT.push_back(TT(con_offset_2 + ltrilinindex(DimXX, ij, dC2), var_zItri_offset+trivarno, -valI+valIt));
@@ -515,6 +495,39 @@ public:
     if (info != NULL) {
       std::free(info);
     }
+  }
+
+  template<typename LoggerType>
+  static inline MatrixType factorizeChoiMatrix(const Eigen::Ref<const MatrixType> & E_YR,
+                                               LoggerType & logger)
+  {
+    // factorize E_YR into M*M'
+
+    Eigen::LDLT<MatrixType> E_YR_ldlt(E_YR);
+    MatrixType MM(E_YR.rows(), E_YR.cols()); // M = P^T * L * \sqrt{D}
+    MM.setZero();
+    MM = E_YR_ldlt.vectorD().array().sqrt().matrix().asDiagonal();
+    MM = E_YR_ldlt.matrixL() * MM;
+    MM = E_YR_ldlt.transpositionsP().transpose() * MM;
+
+    // std::cerr << "DEBUG ACTIVATED USING SQRTM...\n";
+    // MatrixType MM = MatrixType(E_YR).sqrt();
+
+    logger.longdebug("WorstEntglFidelitySCSSolver::factorizeChoiMatrix()",
+                     [&](std::ostream & stream) {
+        stream << "Calculating the worst-case entanglement fidelity of E_YR =\n" << E_YR << "\n"
+               << " ... factorized as M*M' with M =\n" << MM << "\n"
+               // << " ... L = \n" << MatrixType(E_YR_ldlt.matrixL()) << "\n ... D = \n"
+               // << E_YR_ldlt.vectorD() << "\n ... P = " << E_YR_ldlt.transpositionsP().indices() << "\n"
+               << " ... M*M' = \n" << MM*MM.adjoint();
+      });
+
+    return MM;
+  }
+
+  static inline MatrixType factorizeChoiMatrix(const Eigen::Ref<const MatrixType> & E_YR)
+  {
+    return factorizeChoiMatrix(E_YR, Tomographer::Logger::vacuum_logger) ;
   }
   
   inline SCS::scs_int dimX() const { return DimX; }
@@ -654,8 +667,6 @@ private:
 }; // class WorstEntglFidelitySCSSolver
 
 
-/*
-
 
 template<typename DMTypes_>
 class WorstEntglFidelityValueCalculator
@@ -667,15 +678,13 @@ public:
 
   typedef typename DMTypes::RealScalar ValueType;
 
-  inline WorstEntglFidelityValueCalculator(const DMTypes dmt, int dimX_)
-    : dimX(dimX_)
+  inline WorstEntglFidelityValueCalculator(const DMTypes dmt, int dimX_, ValueType epsilon_)
+    : dimX(dimX_), epsilon(epsilon_)
   {
   }
 
-  inline ValueType getValue(const MatrixTypeConstRef & T)
+  inline ValueType getValue(const MatrixTypeConstRef & T) const
   {
-    // TODO: act on & use only triangular part for taking the partial trace
-
     tomographer_assert(T.rows() == T.cols());
     const int dimXY = T.rows();
 
@@ -688,13 +697,24 @@ public:
 
     const MatrixType E = Choi_from_process_matrix(rho_XY, dimX, dimY);
 
-    // calculate the overlap of the Choi state with the maximally entangled state.
+    // calculate the worst-case channel/entanglement fidelity by solving a
+    // semidefinite program
+    //
+    // unlike with the diamond norm, we can't re-use the same matrix
+    // factorization from one call to another because the SDP's main matrix
+    // depends on the channel E itself. Hopefully this is no big deal
+    typedef WorstEntglFidelitySCSSolver<SCS::scs_float>  MyWorstEntglFidSCSSolver;
+    MyWorstEntglFidSCSSolver fidslv(dimX,
+                                    MyWorstEntglFidSCSSolver::factorizeChoiMatrix(E),
+                                    epsilon,
+                                    Tomographer::Logger::vacuum_logger);
 
-    return ...........entanglement_fidelity(E, dimX);
+    return fidslv.calculate();
   }
 
 private:
   const int dimX;
+  const ValueType epsilon;
 };
 
 
@@ -709,8 +729,8 @@ public:
 
   typedef typename ChannelTypes::RealScalar ValueType;
 
-  inline WorstEntglFidelityChannelSpaceValueCalculator(const ChannelTypes cht_)
-    : cht(cht_)
+  inline WorstEntglFidelityChannelSpaceValueCalculator(const ChannelTypes cht_, ValueType epsilon_)
+    : cht(cht_), epsilon(epsilon_)
   {
   }
 
@@ -728,18 +748,26 @@ public:
     MatrixType T(cht.dim(), cht.dim());
     T = remapIsometryToT<MatrixType>(Vpt, cht.dim());
 
-    const MatrixType E( T * T.adjoint() );
+    //    const MatrixType E( T * T.adjoint() ); -- not needed, we can specify
+    //                                              the factorization directly!!
 
-    // calculate the overlap of the Choi state with the maximally entangled state.
+    // calculate the worst-case channel/entanglement fidelity by solving a
+    // semidefinite program
+    //
+    // unlike with the diamond norm, we can't re-use the same matrix
+    // factorization from one call to another because the SDP's main matrix
+    // depends on the channel E itself. Hopefully this is no big deal
+    WorstEntglFidelitySCSSolver<SCS::scs_float> fidslv(cht.dimX(), T, epsilon,
+                                                       Tomographer::Logger::vacuum_logger);
 
-    return ......entanglement_fidelity(E, cht.dimX());
+    return fidslv.calculate();
   }
 
 private:
   const ChannelTypes cht;
+  const ValueType epsilon;
 };
 
-*/
 
 
 

@@ -41,6 +41,17 @@ diamond norm estimation.
         integers, of the same length as `Emn`, where `Nm[k]` is the number of
         times the outcome described by the POVM effect `Emn[k]` was observed.
 
+      - `fig_of_merit`: which figure of merit to use. May be one of
+        'diamond-distance' (the default), 'entanglement-fidelity',
+        'worst-entanglement-fidelity', or a custom callable Python object.
+        Refer to section :ref:`figures-of-merit`.
+
+        The callable will be invoked with as argument a square complex matrix of
+        shape `(d_X*dY, d_X*d_Y)` given as a NumPy array, and where the process
+        matrix is simply given as::
+
+          rho_YR = T * T.conj().T   # T * T'
+
       - `ref_channel_XY`: the reference channel to which to calculate the
         diamond norm distance to. Specify the channel by its Choi matrix on
         :math:`X\otimes Y`, as a :math:`d_X d_Y \times d_X d_Y` `NumPy`

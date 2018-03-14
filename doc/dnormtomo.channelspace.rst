@@ -44,11 +44,14 @@ diamond norm estimation.
         times the outcome described by the POVM effect `Emn[k]` was observed.
 
       - `fig_of_merit`: which figure of merit to use. May be one of
-        'diamond-distance' (the default), 'entanglement-fidelity', or a custom
-        callable Python object.  The callable will be invoked with as argument
-        an isometry of shape `(d_X, d_Y*d_X*d_Y)` given as a NumPy array, and
-        where the output system is the "outer" system of the output of the
-        isometry; the Choi matrix of the process can be recovered with::
+        'diamond-distance' (the default), 'entanglement-fidelity',
+        'worst-entanglement-fidelity' or a custom callable Python object.  Refer
+        to section :ref:`figures-of-merit`.
+
+        The callable will be invoked with as argument an isometry of shape
+        `(d_X, d_Y*d_X*d_Y)` given as a NumPy array, and where the output system
+        is the "outer" system of the output of the isometry; the Choi matrix of
+        the process can be recovered with::
 
           ...........(WRITE ME AND TEST)..............
 

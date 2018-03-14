@@ -200,7 +200,10 @@ BOOST_FIXTURE_TEST_CASE(simple_qubit, identdefs<2>)
 
 BOOST_FIXTURE_TEST_CASE(simple_qubit_channelspace, identdefs<2>)
 {
-  // Choi matrix = diag(0.9,0.1,0,1)
+  // Choi matrix = [ 0.9  0.3  0    0
+  //                 0.3  0    0    0
+  //                 0    0    0    0
+  //                 0    0    0    1 ]
   //
   // Here we need a Stinespring isometry:
   //
