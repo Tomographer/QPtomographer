@@ -75,12 +75,15 @@ MatrixType get_ref_channel(const int dimX, const int dimY, py::object ref_channe
     }
 
     MatrixType mat_ref_channel_XY(dimX*dimX,dimX*dimX);
+    mat_ref_channel_XY.setZero();
     
     for (int k = 0; k < dimX; ++k) {
       for (int k2 = 0; k2 < dimX; ++k2) {
         mat_ref_channel_XY(k + dimX*k, k2 + dimX*k2) = 1;
       }
     }
+
+    std::cerr << "mat_ref_channel_XY = \n" << mat_ref_channel_XY << "\n";
 
     return mat_ref_channel_XY;
   }

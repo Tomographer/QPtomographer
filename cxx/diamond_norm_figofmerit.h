@@ -55,6 +55,9 @@ public:
     // finally, the difference between the two cpm's.
     MatrixType Delta = E - E_ref;
 
+    tomographer_assert( (Delta - Delta.adjoint()).norm()
+                        < dimX*dimY*dimX*dimY*Eigen::NumTraits<typename DMTypes::RealScalar>::dummy_precision() );
+
     // TODO: E might be trace-decreasing if rho_X doesn't have full support. However this
     // is generically not a problem because those states have zero measure --- ???
 
