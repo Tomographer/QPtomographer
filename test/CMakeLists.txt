@@ -39,6 +39,17 @@ add_test(NAME test_entanglement_fidelity
     COMMAND $<TARGET_FILE:test_entanglement_fidelity>
     )
 
+# test_worst_entanglement_fidelity:
+add_executable(test_worst_entanglement_fidelity test_worst_entanglement_fidelity.cxx)
+#set_property(TARGET test_worst_entanglement_fidelity PROPERTY CXX_STANDARD 11) # Enable C++11 -- flags already set by TomographerPy
+target_link_libraries(test_worst_entanglement_fidelity PRIVATE ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_include_directories(test_worst_entanglement_fidelity PUBLIC ${CMAKE_SOURCE_DIR}/cxx)
+target_link_libraries(test_worst_entanglement_fidelity PRIVATE TomographerPy::TomographerPy)
+target_link_libraries(test_worst_entanglement_fidelity PRIVATE ${SCS_DIR_LIBRARIES})
+add_test(NAME test_worst_entanglement_fidelity
+    COMMAND $<TARGET_FILE:test_worst_entanglement_fidelity>
+    )
+
 # test_channelspace:
 add_executable(test_channelspace test_channelspace.cxx)
 #set_property(TARGET test_channelspace PROPERTY CXX_STANDARD 11) # Enable C++11 -- flags already set by TomographerPy
