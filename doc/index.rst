@@ -17,6 +17,7 @@ tomography procedure, using the method described in |paper_arxiv_ref|.
    :caption: Contents:
 
    install
+   figures_of_merit
    dnormtomo
 
 

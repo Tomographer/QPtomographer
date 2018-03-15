@@ -695,7 +695,22 @@ public:
     // calculate rho_{XY}
     const MatrixType rho_XY = T * T.adjoint();
 
-    const MatrixType E = Choi_from_process_matrix(rho_XY, dimX, dimY);
+    typedef Eigen::Matrix<typename MatrixType::Scalar, Eigen::Dynamic, Eigen::Dynamic>
+      MatrixDynType;
+
+    // calculate rho_X -- reduced state on input system
+    const MatrixDynType rho_X = partial_trace_B(rho_XY, dimX);
+  
+    // need \sqrt{\rho_X}
+    Eigen::SelfAdjointEigenSolver<MatrixDynType> eigrhoX(rho_X);
+    const MatrixDynType rhoXsqrtinvtimesEye =
+      Eigen::kroneckerProduct(eigrhoX.operatorInverseSqrt(), MatrixDynType::Identity(dimY,dimY));
+
+    // rho^{-1/2}*T*T'*rho^{-1/2} == E, so we can choose a factorization of E as M = rho^{-1/2}*T
+    const MatrixType M = rhoXsqrtinvtimesEye * T;
+
+    //    const MatrixType E = Choi_from_process_matrix(rho_XY, dimX, dimY);
+
 
     // calculate the worst-case channel/entanglement fidelity by solving a
     // semidefinite program
@@ -704,10 +719,7 @@ public:
     // factorization from one call to another because the SDP's main matrix
     // depends on the channel E itself. Hopefully this is no big deal
     typedef WorstEntglFidelitySCSSolver<SCS::scs_float>  MyWorstEntglFidSCSSolver;
-    MyWorstEntglFidSCSSolver fidslv(dimX,
-                                    MyWorstEntglFidSCSSolver::factorizeChoiMatrix(E),
-                                    epsilon,
-                                    Tomographer::Logger::vacuum_logger);
+    MyWorstEntglFidSCSSolver fidslv(dimX, M, epsilon, Tomographer::Logger::vacuum_logger);
 
     return fidslv.calculate();
   }
