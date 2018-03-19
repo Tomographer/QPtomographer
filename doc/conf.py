@@ -48,7 +48,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Reliable Diamond Norm Estimation'
+project = 'Practical and reliable process tomography'
 copyright = '2017, Philippe Faist'
 author = 'Philippe Faist'
 

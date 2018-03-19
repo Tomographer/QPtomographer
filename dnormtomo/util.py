@@ -159,7 +159,7 @@ def simulate_process_prep_measure(E_AB, prep_meas_settings):
     The process `E_AB` should be a :py:class:`qutip.Qobj` containing the Choi
     matrix of the channel being applied, as a :py:class:`qutip.Qobj` matrix (NOT
     as a superoperator).  It should not be normalized, i.e., we expect
-    :math:`\mathrm{tr}_B(E_AB) == 1_A`.
+    :math:`\mathrm{tr}_B(E_{AB}) = \mathbb{I}_A`.
 
     The argument `prep_meas_settings` must be a list of tuples `(sigma_in,
     Mk_out, num_repeats)`, where `sigma_in` is an input state specified as a

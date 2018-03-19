@@ -53,15 +53,15 @@ An alternative quantity which is relevant to quantify the distance of a channel
 :math:`\mbox{id}_{X\to X'}` is the so-called *entanglement fidelity*
 
 .. math::
-    F_{e}(\mathcal{E}_{X\to X'}) = F^2(\mathcal{E}_{X\to X'}(\phi_{XR}), \phi_{XR})
-     = {\langle\phi|}_{XR} \mathcal{E}_{X\to X'}({|\phi\rangle}{\langle\phi|}_{XR}) {|\phi\rangle}_{XR}\ ,
+    F_{e}(\mathcal{E}_{X\to X'}) = F^2(\mathcal{E}_{X\to X'}(\varphi_{XR}), \varphi_{XR})
+     = {\langle\varphi|}_{XR} \mathcal{E}_{X\to X'}({|\varphi\rangle}{\langle\varphi|}_{XR}) {|\varphi\rangle}_{XR}\ ,
 
-where we have defined the maximally entangled state :math:`|\phi\rangle_{XR}`
+where we have defined the maximally entangled state :math:`|\varphi\rangle_{XR}`
 (using a reference system :math:`R\simeq X`) and the (square) fidelity between
 states :math:`F^2(\rho,\sigma)`, as:
 
 .. math::
-   |\phi\rangle_{XR} = \frac{1}{\sqrt{\mbox{dim}(X)}} \,
+   |\varphi\rangle_{XR} = \frac{1}{\sqrt{\mbox{dim}(X)}} \,
       \sum_k {|k\rangle}_X\otimes{|k\rangle}_{R}\ ;
 
 .. math::
@@ -89,7 +89,7 @@ The optimization may be restricted to pure states without loss of generality.
 
 The worst-case entanglement fidelity may be computed by evaluating the following
 semidefinite program, in terms of the real variable :math:`\mu` and positive
-semidefinite variable :math:`\rho_X`:
+semidefinite variable :math:`\rho_X \geqslant 0`:
 
 .. math::
    \begin{array}{rc}
