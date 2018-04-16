@@ -82,7 +82,7 @@ entanglement fidelity* of a channel :math:`\mathcal{E}_{X\to X'}` (where
      \inf_{\sigma_{XR}} F^2(\mathcal{E}_{X\to X'}(\sigma_{XR}), \sigma_{XR})\ ,
 
 where the optimization ranges over all bipartite quantum states defined over the
-input and a refernce system :math:`R\simeq X`, and where :math:`F(\rho,\sigma)`
+input and a reference system :math:`R\simeq X`, and where :math:`F(\rho,\sigma)`
 is defined as above.
 
 The optimization may be restricted to pure states without loss of generality.
@@ -92,7 +92,7 @@ semidefinite program, in terms of the real variable :math:`\mu` and positive
 semidefinite variable :math:`\rho_X \geqslant 0`:
 
 .. math::
-   \begin{array}{rc}
+   \begin{array}{rcl}
    F_{\mbox{worst}}(\mathcal{E}_{X\to X'})\quad =
    \quad\mbox{minimize:}\quad
    & \mu \qquad            &\ , \\
