@@ -10,41 +10,64 @@ There are some little things to set up first however.
 Compiling SCS
 ~~~~~~~~~~~~~
 
-First, you need `SCS <https://github.com/cvxgrp/scs>`_. We make use of this
-great library to calculate the diamond norm distance between two channels.
-(Unfortunately, it is not enough to install the `scs` Python package, because we
-need SCS' C interface.)
+First, you need to compile `SCS ≥ 2.0 <https://github.com/cvxgrp/scs>`_. We make
+use of this great library to calculate the diamond norm distance between two
+channels.  (Unfortunately, it is not enough to install the `scs` Python package,
+because we need SCS' C interface.)
 
-Download (or clone) `SCS <https://github.com/cvxgrp/scs>`_, say to
-``$HOME/Downloads/scs``, and compile it according to the following instructions.
+Make sure you have downloaded SCS version 2.0.0 or later.
 
-First, edit the file ``scs.mk`` (in the SCS sources) as follows:
+Download (or clone) `SCS ≥ 2.0 <https://github.com/cvxgrp/scs>`_, say to
+``$HOME/Downloads/scs``, and compile it with specific options set.  This can be
+done with the following steps using the command-line.
 
- - Search for a line starting with ``CTRLC =``, and make sure it reads ``CTRLC
-   = 0`` (we will catch *Ctrl+C* keystrokes ourselves)
+First, clone SCS into your `Downloads` directory, and enter that directory.
+(You may choose a different directory; the following instructions however assume
+you clone SCS in the `Downloads` directory.)
+
+.. code-block:: bash
+
+    > cd Downloads
+    > git clone https://github.com/cvxgrp/scs.git
+    > cd scs
+
+If you are on *Mac OS X*, compile SCS with the following command::
+
+    > make CTRLC=0 USE_OPENMP=0 USE_LAPACK=1 BLASLDFLAGS="-framework Accelerate"
+
+Otherwise (e.g. on *Linux*), compile SCS with the following command::
+
+    > make CTRLC=0 USE_OPENMP=0 USE_LAPACK=1
+
+
+
+*Notes:*
+
+ - ``CTRLC=0`` is needed because we will catch *Ctrl+C* keystrokes ourselves,
+   and SCS's keystrokes captures interferes with our own mechanicsm.
    
- - Search for a line starting with ``USE_OPENMP =``, and make sure that it
-   reads ``USE_OPENMP = 0`` (our invokation of *SCS* is already within parallel
-   tasks, so avoid double-parallelism which won't speed up anything)
+ - We neeed ``USE_OPENMP=0`` because our invokation of *SCS* is already within
+   parallel tasks, so we want to avoid double-parallelism which won't speed up
+   anything.
    
- - Search for a line starting with ``USE_LAPACK =``, and make sure that it reads
-   ``USE_LAPACK = 1`` (needed for solving SDPs).
+ - Lapack is needed for solving SDPs, so it must be enabled with
+   ``USE_LAPACK=1``.
    
    You might have to adjust or specify the necessary flags for linking to
-   `BLAS/LAPACK` (the variable `BLASLDFLAGS`). [On Mac OS X, use ``-framework
-   Accelerate``; on Ubuntu, install for example `openblas` and use ``-llapack
-   -lblas``.]
-   
-Finally, compile `scs` by running::
+   `BLAS/LAPACK` (the variable ``BLASLDFLAGS=...``).  On *Mac OS X*, use
+   ``"-framework Accelerate"``; on Ubuntu, install for example `openblas` and
+   use ``"-llapack -lblas"``.  The defaults might be satisfactory.  Try and see
+   what works.
 
-    > make
+
 
 
 Install `tomographer` and its prerequisites
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Make sure you have already installed the `tomographer` package, `as described
-here <https://tomographer.github.io/tomographer/get-started/#python-version>`_.
+Make sure you have already installed the `tomographer` package (version ≥ 5.4),
+`as described here
+<https://tomographer.github.io/tomographer/get-started/#python-version>`_.
 
 
 

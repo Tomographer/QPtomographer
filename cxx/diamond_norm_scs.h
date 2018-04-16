@@ -25,7 +25,7 @@ public:
   typedef RealScalarType_ RealScalarType;
   typedef std::complex<RealScalarType> ComplexScalarType;
 
-  static_assert( std::is_same<RealScalarType, SCS::scs_float>::value,
+  static_assert( std::is_same<RealScalarType, scs_float>::value,
                  "DiamondNormSCSSolver only supports the scs_float scalar type SCS was compiled with.");
 
   typedef BaseLoggerType_ BaseLoggerType;
@@ -34,34 +34,34 @@ public:
 
 protected:
 
-  const SCS::scs_int DimX;
-  const SCS::scs_int DimY;
-  const SCS::scs_int DimXY;
+  const scs_int DimX;
+  const scs_int DimY;
+  const scs_int DimXY;
 
-  const SCS::scs_float epsilon;
+  const scs_float epsilon;
 
-  Eigen::SparseMatrix<SCS::scs_float, Eigen::ColMajor, SCS::scs_int> A;
-  Eigen::Matrix<SCS::scs_float, Eigen::Dynamic, 1> bVec;
-  Eigen::Matrix<SCS::scs_float, Eigen::Dynamic, 1> cVec;
+  Eigen::SparseMatrix<scs_float, Eigen::ColMajor, scs_int> A;
+  Eigen::Matrix<scs_float, Eigen::Dynamic, 1> bVec;
+  Eigen::Matrix<scs_float, Eigen::Dynamic, 1> cVec;
   
-  SCS::Cone * cone;
-  SCS::Data * data;
+  ScsCone * cone;
+  ScsData * data;
 
-  SCS::Sol * sol;
-  SCS::Info * info;
+  ScsSolution * sol;
+  ScsInfo * info;
 
-  SCS::Work * work;
+  ScsWork * work;
 
-  const std::vector<SCS::scs_int> sdpcones;
+  const std::vector<scs_int> sdpcones;
 
   Tomographer::Logger::LocalLogger<BaseLoggerType> _logger;
 
 private:
   // helpers for the constructor
   
-  inline static constexpr SCS::scs_int total_constraint_dof(SCS::scs_int DimX,
-                                                            SCS::scs_int /*DimY*/,
-                                                            SCS::scs_int DimXY) {
+  inline static constexpr scs_int total_constraint_dof(scs_int DimX,
+                                                            scs_int /*DimY*/,
+                                                            scs_int DimXY) {
     // number of constraints degrees of freedom = dC1x + dC2x + dC3x = dC1x + dC2x * 2
     return DimX*(2*DimX+1) + DimXY*(2*DimXY+1) * 2;
   }
@@ -77,7 +77,7 @@ private:
     cone->q = NULL;
     // positive semidefinite cone { X | min(eig(X)) >= 0, X = X^T }
     cone->ssize = sdpcones.size();
-    cone->s = const_cast<SCS::scs_int*>(sdpcones.data());
+    cone->s = const_cast<scs_int*>(sdpcones.data());
     // exponential cone {(x,y,z) | y e^(x/y) <= z, y>0 }
     cone->ep = 0;
     // dual exponential cone {(u,v,w) | −u e^(v/u) <= e w, u<0}
@@ -94,7 +94,7 @@ private:
     data->m = A.rows(); // rows of A
     data->n = A.cols(); // columns of A
 
-    data->A = (SCS::AMatrix*)std::calloc(1, sizeof(SCS::AMatrix));
+    data->A = (ScsMatrix*)std::calloc(1, sizeof(ScsMatrix));
     data->A->m = data->m;
     data->A->n = data->n;
     // use Eigen's support of Sparse matrices to get correct representation.
@@ -108,7 +108,7 @@ private:
 
     // we should probably expose some API to tune these values -- these are
     // hard-coded for now.
-    data->stgs = (SCS::Settings*)std::malloc(sizeof(SCS::Settings));
+    data->stgs = (ScsSettings*)std::malloc(sizeof(ScsSettings));
     data->stgs->normalize = 1;
     data->stgs->scale = 5.0;
     data->stgs->rho_x = 1e-3;
@@ -122,7 +122,7 @@ private:
 
   inline void init_work()
   {
-    work = SCS::scs_init(data, cone, info);
+    work = scs_init(data, cone, info);
   }
 
 public:
@@ -147,10 +147,10 @@ public:
     logger.debug("Constructing diamond norm SCS solver -- copy constructor");
 
     // allocate SCS structures
-    cone = (SCS::Cone*)std::calloc(1, sizeof(SCS::Cone));
-    data = (SCS::Data*)std::calloc(1, sizeof(SCS::Data));
-    sol = (SCS::Sol*)std::calloc(1, sizeof(SCS::Sol));
-    info = (SCS::Info*)std::calloc(1, sizeof(SCS::Info));
+    cone = (ScsCone*)std::calloc(1, sizeof(ScsCone));
+    data = (ScsData*)std::calloc(1, sizeof(ScsData));
+    sol = (ScsSolution*)std::calloc(1, sizeof(ScsSolution));
+    info = (ScsInfo*)std::calloc(1, sizeof(ScsInfo));
 
     // init the cone
     init_cone();
@@ -192,8 +192,8 @@ public:
   }
 
   
-  DiamondNormSCSSolver(const SCS::scs_int sysDimX, const SCS::scs_int sysDimY, 
-                       const SCS::scs_float epsilon_, BaseLoggerType & baselogger)
+  DiamondNormSCSSolver(const scs_int sysDimX, const scs_int sysDimY, 
+                       const scs_float epsilon_, BaseLoggerType & baselogger)
     : DimX(sysDimX),
       DimY(sysDimY),
       DimXY(sysDimX * sysDimY),
@@ -213,10 +213,10 @@ public:
     logger.debug("Constructing diamond norm SCS solver.");
 
     // allocate SCS structures
-    cone = (SCS::Cone*)std::calloc(1, sizeof(SCS::Cone));
-    data = (SCS::Data*)std::calloc(1, sizeof(SCS::Data));
-    sol = (SCS::Sol*)std::calloc(1, sizeof(SCS::Sol));
-    info = (SCS::Info*)std::calloc(1, sizeof(SCS::Info));
+    cone = (ScsCone*)std::calloc(1, sizeof(ScsCone));
+    data = (ScsData*)std::calloc(1, sizeof(ScsData));
+    sol = (ScsSolution*)std::calloc(1, sizeof(ScsSolution));
+    info = (ScsInfo*)std::calloc(1, sizeof(ScsInfo));
     
     // cones:
     // ------------------------------
@@ -226,7 +226,7 @@ public:
     // prepare the A matrix:
     // ------------------------------
     
-    typedef Eigen::Triplet<SCS::scs_float> TT;
+    typedef Eigen::Triplet<scs_float> TT;
     std::vector<TT> AT; // prepare triplets for sparse A matrix
 
     // A has:
@@ -237,31 +237,31 @@ public:
     //
 
     // dimension of each constraint block (matrix dimension)
-    const SCS::scs_int dC1 = 2*DimX;
-    const SCS::scs_int dC2 = 2*DimXY;
-    const SCS::scs_int dC3 = dC2;
+    const scs_int dC1 = 2*DimX;
+    const scs_int dC2 = 2*DimXY;
+    const scs_int dC3 = dC2;
     // # of degrees of freedom of each constraint block (== number of corresponding rows in A)
-    const SCS::scs_int dC1x = dC1*(dC1+1)/2;
-    const SCS::scs_int dC2x = dC2*(dC2+1)/2;
-    const SCS::scs_int dC3x = dC2x;
+    const scs_int dC1x = dC1*(dC1+1)/2;
+    const scs_int dC2x = dC2*(dC2+1)/2;
+    const scs_int dC3x = dC2x;
 
-    const SCS::scs_int con_offset_1 = 0;
-    const SCS::scs_int con_offset_2 = con_offset_1+dC1x;
-    const SCS::scs_int con_offset_3 = con_offset_2+dC2x;
+    const scs_int con_offset_1 = 0;
+    const scs_int con_offset_2 = con_offset_1+dC1x;
+    const scs_int con_offset_3 = con_offset_2+dC2x;
   
-    const SCS::scs_int var_alpha_offset = 0;
-    const SCS::scs_int var_zRdiag_offset = var_alpha_offset + 1;
-    const SCS::scs_int var_zRtri_offset = var_zRdiag_offset + DimXY;
-    const SCS::scs_int var_zItri_offset = var_zRtri_offset + DimXY*(DimXY-1)/2;
+    const scs_int var_alpha_offset = 0;
+    const scs_int var_zRdiag_offset = var_alpha_offset + 1;
+    const scs_int var_zRtri_offset = var_zRdiag_offset + DimXY;
+    const scs_int var_zItri_offset = var_zRtri_offset + DimXY*(DimXY-1)/2;
 
     // A(0:dC1*,0) = A("block #1","alpha") = -vec(\Ident_{2dX})
-    SCS::scs_int k = 0;
-    for (SCS::scs_int j = 0; j < 2*DimX; ++j) {
-      AT.push_back(TT(k, var_alpha_offset, SCS::scs_float(-1)));
+    scs_int k = 0;
+    for (scs_int j = 0; j < 2*DimX; ++j) {
+      AT.push_back(TT(k, var_alpha_offset, scs_float(-1)));
       k += 2*DimX - j;
     }
 
-    const SCS::scs_float SQRT2 = boost::math::constants::root_two<SCS::scs_float>();
+    const scs_float SQRT2 = boost::math::constants::root_two<scs_float>();
 
     using tomo_internal::ltrilinindex;
 
@@ -272,13 +272,13 @@ public:
     // A(dC1x+dC2x:dC1x+dC2x+dC3x,1:1+dzR) = A("block #3","zR"),
     // A(dC1x+dC2x:dC1x+dC2x+dC3x,1+dzR:1+dzR+dzI) = A("block #3","zI"),
     //
-    SCS::scs_int trivarno = 0;
-    for (SCS::scs_int ij = 0; ij < DimXY; ++ij) {
-      const SCS::scs_int i = ij / DimY;
-      const SCS::scs_int j = ij % DimY;
-      for (SCS::scs_int ipjp = 0; ipjp < ij; ++ipjp) {
-        const SCS::scs_int ip = ipjp / DimY;
-        const SCS::scs_int jp = ipjp % DimY;
+    scs_int trivarno = 0;
+    for (scs_int ij = 0; ij < DimXY; ++ij) {
+      const scs_int i = ij / DimY;
+      const scs_int j = ij % DimY;
+      for (scs_int ipjp = 0; ipjp < ij; ++ipjp) {
+        const scs_int ip = ipjp / DimY;
+        const scs_int jp = ipjp % DimY;
         // deal with z^R_{(ij),(i'j')} and z^I_{(ij),(i'j')}
         //std::cout << "Initializing i,j="<<i<<","<<j<<"  i',j'="<<ip<<","<<jp<<" (trivarno="<<trivarno<<") ... \n";
         // --------
@@ -314,14 +314,14 @@ public:
       // deal with z^R_{(ij),(ij)}:
       //std::cout << "Initializing diagonal i,j="<<i<<","<<j<<" = i',j'  ij=" << ij <<" ... \n";
       // BLOCK 1:
-      AT.push_back(TT(con_offset_1+ltrilinindex(i, i, dC1), var_zRdiag_offset+ij, SCS::scs_float(1)));
-      AT.push_back(TT(con_offset_1+ltrilinindex(DimX+i, DimX+i, dC1), var_zRdiag_offset+ij, SCS::scs_float(1)));
+      AT.push_back(TT(con_offset_1+ltrilinindex(i, i, dC1), var_zRdiag_offset+ij, scs_float(1)));
+      AT.push_back(TT(con_offset_1+ltrilinindex(DimX+i, DimX+i, dC1), var_zRdiag_offset+ij, scs_float(1)));
       // BLOCK 2:
-      AT.push_back(TT(con_offset_2+ltrilinindex(ij, ij, dC2), var_zRdiag_offset+ij, SCS::scs_float(-1)));
-      AT.push_back(TT(con_offset_2+ltrilinindex(DimXY+ij, DimXY+ij, dC2), var_zRdiag_offset+ij, SCS::scs_float(-1)));
+      AT.push_back(TT(con_offset_2+ltrilinindex(ij, ij, dC2), var_zRdiag_offset+ij, scs_float(-1)));
+      AT.push_back(TT(con_offset_2+ltrilinindex(DimXY+ij, DimXY+ij, dC2), var_zRdiag_offset+ij, scs_float(-1)));
       // BLOCK 3:
-      AT.push_back(TT(con_offset_3+ltrilinindex(ij, ij, dC3), var_zRdiag_offset+ij, SCS::scs_float(-1)));
-      AT.push_back(TT(con_offset_3+ltrilinindex(DimXY+ij, DimXY+ij, dC3), var_zRdiag_offset+ij, SCS::scs_float(-1)));
+      AT.push_back(TT(con_offset_3+ltrilinindex(ij, ij, dC3), var_zRdiag_offset+ij, scs_float(-1)));
+      AT.push_back(TT(con_offset_3+ltrilinindex(DimXY+ij, DimXY+ij, dC3), var_zRdiag_offset+ij, scs_float(-1)));
     }
 
     if (CheckInputs) {
@@ -349,7 +349,7 @@ public:
     
     // C vector
     cVec.setZero();
-    cVec(0) = SCS::scs_float(1); // minimize: alpha -- which is the first variable
+    cVec(0) = scs_float(1); // minimize: alpha -- which is the first variable
 
     // finally, set up the SCS data structure
     init_data();
@@ -362,7 +362,7 @@ public:
   {
     // free workspace variables
     if (work != NULL) {
-      SCS::scs_finish(work);
+      scs_finish(work);
     }
     // free other structures
     if (cone != NULL) {
@@ -385,9 +385,9 @@ public:
     }
   }
   
-  inline SCS::scs_int dimX() const { return DimX; }
-  inline SCS::scs_int dimY() const { return DimY; }
-  inline SCS::scs_int dimXY() const { return DimXY; }
+  inline scs_int dimX() const { return DimX; }
+  inline scs_int dimY() const { return DimY; }
+  inline scs_int dimXY() const { return DimXY; }
 
   RealScalarType calculate(
       const Eigen::Ref<const Eigen::Matrix<ComplexScalarType,Eigen::Dynamic,Eigen::Dynamic> > & Delta
@@ -400,15 +400,15 @@ public:
       });
     
     if (CheckInputs) {
-      tomographer_assert((SCS::scs_int)Delta.rows() == DimXY);
+      tomographer_assert((scs_int)Delta.rows() == DimXY);
       tomographer_assert(Delta.cols() == Delta.rows());
       tomographer_assert( (Delta - Delta.adjoint()).norm() <
                           Delta.rows()*Delta.cols()*Eigen::NumTraits<RealScalarType>::dummy_precision());
     }
 
-    const SCS::scs_int con_offset_2 = DimX*(2*DimX+1);
-    const SCS::scs_int dC2x = DimXY*(2*DimXY+1);
-    const SCS::scs_float SQRT2 = boost::math::constants::root_two<SCS::scs_float>();
+    const scs_int con_offset_2 = DimX*(2*DimX+1);
+    const scs_int dC2x = DimXY*(2*DimXY+1);
+    const scs_float SQRT2 = boost::math::constants::root_two<scs_float>();
 
     // copy the lower tri part of
     //
@@ -417,11 +417,11 @@ public:
     //
     // column-wise onto bVec(con_offset_2:con_offset_2+dC2):
     //
-    SCS::scs_int koff = con_offset_2;
+    scs_int koff = con_offset_2;
     // offset for the second (lower right) DeltaR's columns in linear index
-    SCS::scs_int koff2 = con_offset_2 + dC2x - DimXY*(DimXY+1)/2;
-    for (SCS::scs_int j = 0; j < DimXY; ++j) {
-      const SCS::scs_int col_below_len = DimXY-j-1;
+    scs_int koff2 = con_offset_2 + dC2x - DimXY*(DimXY+1)/2;
+    for (scs_int j = 0; j < DimXY; ++j) {
+      const scs_int col_below_len = DimXY-j-1;
       // DeltaR's j-th diagonal element, twice:
       bVec(koff2) = bVec(koff) = - Delta(j,j).real();
       ++koff;
@@ -442,14 +442,14 @@ public:
     // is automatically updated in this way
 
     // Now solve!
-    SCS::scs_int status = SCS::scs_solve(work, data, cone, sol, info);
+    scs_int status = scs_solve(work, data, cone, sol, info);
 
     // Check that the SDP converged.
     if (status != SCS_SOLVED) {
       logger.warning("SCS could not solve the SDP: ended with status %s (code %d)", info->status, status);
     }
 
-    SCS::scs_float dnorm = (info->pobj + info->dobj)/2;
+    scs_float dnorm = (info->pobj + info->dobj)/2;
     logger.longdebug("[%s] code %d solution is dnorm=%f", info->status, (int)status, (double)dnorm);
 
     // Use the current solution as a warm-start for future calls to calculate()

@@ -106,7 +106,7 @@ BOOST_FIXTURE_TEST_CASE(simple_qubit, identdefs<2>)
     0,   0, 0, 1;
 
   Tomographer::Logger::BoostTestLogger logger(Tomographer::Logger::LONGDEBUG) ;
-  typedef WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> Solver;
+  typedef WorstEntglFidelitySCSSolver<scs_float, Tomographer::Logger::BoostTestLogger> Solver;
   Solver fidslv(2, Solver::factorizeChoiMatrix(E), 1e-8, logger);
 
   double fid = fidslv.calculate();
@@ -134,7 +134,7 @@ BOOST_FIXTURE_TEST_CASE(qutrit_case, identdefs<3>)
   0.2,  0,  0,  0,0.8,  0,  0,  0,  1 ;
   
   Tomographer::Logger::BoostTestLogger logger(Tomographer::Logger::LONGDEBUG) ;
-  typedef WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> Solver;
+  typedef WorstEntglFidelitySCSSolver<scs_float, Tomographer::Logger::BoostTestLogger> Solver;
   Solver fidslv(3, Solver::factorizeChoiMatrix(E), 1e-7, logger);
 
   double fid = fidslv.calculate();
@@ -160,7 +160,7 @@ BOOST_FIXTURE_TEST_CASE(qutrit_case_close, identdefs<3>)
     0.9,0,  0,  0,0.9,  0,  0,  0,  1 ;
   
   Tomographer::Logger::BoostTestLogger logger(Tomographer::Logger::LONGDEBUG) ;
-  typedef WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> Solver;
+  typedef WorstEntglFidelitySCSSolver<scs_float, Tomographer::Logger::BoostTestLogger> Solver;
   Solver fidslv(3, Solver::factorizeChoiMatrix(E), 1e-7, logger);
 
   double fid = fidslv.calculate();
@@ -187,7 +187,7 @@ BOOST_FIXTURE_TEST_CASE(qutrit_case_ideal, identdefs<3>)
     1,  0,  0,  0,  1,  0,  0,  0,  1 ;
   
   Tomographer::Logger::BoostTestLogger logger(Tomographer::Logger::LONGDEBUG) ;
-  typedef WorstEntglFidelitySCSSolver<SCS::scs_float, Tomographer::Logger::BoostTestLogger> Solver;
+  typedef WorstEntglFidelitySCSSolver<scs_float, Tomographer::Logger::BoostTestLogger> Solver;
   Solver fidslv(3, Solver::factorizeChoiMatrix(E), 1e-7, logger);
 
   double fid = fidslv.calculate();

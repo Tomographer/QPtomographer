@@ -47,7 +47,7 @@ public:
 
   typedef Eigen::Matrix<ComplexScalarType,Eigen::Dynamic,Eigen::Dynamic> MatrixType;
 
-  static_assert( std::is_same<RealScalarType, SCS::scs_float>::value,
+  static_assert( std::is_same<RealScalarType, scs_float>::value,
                  "WorstEntglFidelitySCSSolver only supports the scs_float scalar type SCS was compiled with.");
 
   typedef BaseLoggerType_ BaseLoggerType;
@@ -56,32 +56,32 @@ public:
 
 protected:
 
-  const SCS::scs_int DimX;
-  const SCS::scs_int DimXX;
+  const scs_int DimX;
+  const scs_int DimXX;
 
-  const SCS::scs_float epsilon;
+  const scs_float epsilon;
 
-  Eigen::SparseMatrix<SCS::scs_float, Eigen::ColMajor, SCS::scs_int> A;
-  Eigen::Matrix<SCS::scs_float, Eigen::Dynamic, 1> bVec;
-  Eigen::Matrix<SCS::scs_float, Eigen::Dynamic, 1> cVec;
+  Eigen::SparseMatrix<scs_float, Eigen::ColMajor, scs_int> A;
+  Eigen::Matrix<scs_float, Eigen::Dynamic, 1> bVec;
+  Eigen::Matrix<scs_float, Eigen::Dynamic, 1> cVec;
   
-  SCS::Cone * cone;
-  SCS::Data * data;
+  ScsCone * cone;
+  ScsData * data;
 
-  SCS::Sol * sol;
-  SCS::Info * info;
+  ScsSolution * sol;
+  ScsInfo * info;
 
-  SCS::Work * work;
+  ScsWork * work;
 
-  const std::vector<SCS::scs_int> sdpcones;
+  const std::vector<scs_int> sdpcones;
 
   Tomographer::Logger::LocalLogger<BaseLoggerType> _logger;
 
 private:
   // helpers for the constructor
  
-  inline static constexpr SCS::scs_int total_constraint_dof(SCS::scs_int DimX,
-                                                            SCS::scs_int DimXX) {
+  inline static constexpr scs_int total_constraint_dof(scs_int DimX,
+                                                            scs_int DimXX) {
     // number of constraints degrees of freedom = dC0x + dC1x + dC2x
     return 1 + DimX*(2*DimX+1) +  (1+DimXX)*(2*(1+DimXX)+1) ;
   }
@@ -97,7 +97,7 @@ private:
     cone->q = NULL;
     // positive semidefinite cone { X | min(eig(X)) >= 0, X = X^T }
     cone->ssize = sdpcones.size();
-    cone->s = const_cast<SCS::scs_int*>(sdpcones.data());
+    cone->s = const_cast<scs_int*>(sdpcones.data());
     // exponential cone {(x,y,z) | y e^(x/y) <= z, y>0 }
     cone->ep = 0;
     // dual exponential cone {(u,v,w) | −u e^(v/u) <= e w, u<0}
@@ -114,7 +114,7 @@ private:
     data->m = A.rows(); // rows of A
     data->n = A.cols(); // columns of A
 
-    data->A = (SCS::AMatrix*)std::calloc(1, sizeof(SCS::AMatrix));
+    data->A = (ScsMatrix*)std::calloc(1, sizeof(ScsMatrix));
     data->A->m = data->m;
     data->A->n = data->n;
     // use Eigen's support of Sparse matrices to get correct representation.
@@ -128,7 +128,7 @@ private:
 
     // we should probably expose some API to tune these values -- these are
     // hard-coded for now.
-    data->stgs = (SCS::Settings*)std::malloc(sizeof(SCS::Settings));
+    data->stgs = (ScsSettings*)std::malloc(sizeof(ScsSettings));
     data->stgs->normalize = 1;
     data->stgs->scale = 5.0;
     data->stgs->rho_x = 1e-3;
@@ -142,7 +142,7 @@ private:
 
   inline void init_work()
   {
-    work = SCS::scs_init(data, cone, info);
+    work = scs_init(data, cone, info);
   }
 
 public:
@@ -166,10 +166,10 @@ public:
     logger.debug("Constructing worst-case entanglement fidelity SCS solver -- copy constructor");
 
     // allocate SCS structures
-    cone = (SCS::Cone*)std::calloc(1, sizeof(SCS::Cone));
-    data = (SCS::Data*)std::calloc(1, sizeof(SCS::Data));
-    sol = (SCS::Sol*)std::calloc(1, sizeof(SCS::Sol));
-    info = (SCS::Info*)std::calloc(1, sizeof(SCS::Info));
+    cone = (ScsCone*)std::calloc(1, sizeof(ScsCone));
+    data = (ScsData*)std::calloc(1, sizeof(ScsData));
+    sol = (ScsSolution*)std::calloc(1, sizeof(ScsSolution));
+    info = (ScsInfo*)std::calloc(1, sizeof(ScsInfo));
 
     // init the cone
     init_cone();
@@ -211,9 +211,9 @@ public:
 
   
   WorstEntglFidelitySCSSolver(
-      const SCS::scs_int sysDimX,
+      const scs_int sysDimX,
       const Eigen::Ref<const Eigen::Matrix<ComplexScalarType,Eigen::Dynamic,Eigen::Dynamic> > & M_YR,
-      const SCS::scs_float epsilon_,
+      const scs_float epsilon_,
       BaseLoggerType & baselogger
       )
     : DimX(sysDimX),
@@ -235,15 +235,15 @@ public:
 
 
     // allocate SCS structures
-    cone = (SCS::Cone*)std::calloc(1, sizeof(SCS::Cone));
-    data = (SCS::Data*)std::calloc(1, sizeof(SCS::Data));
-    sol = (SCS::Sol*)std::calloc(1, sizeof(SCS::Sol));
-    info = (SCS::Info*)std::calloc(1, sizeof(SCS::Info));
+    cone = (ScsCone*)std::calloc(1, sizeof(ScsCone));
+    data = (ScsData*)std::calloc(1, sizeof(ScsData));
+    sol = (ScsSolution*)std::calloc(1, sizeof(ScsSolution));
+    info = (ScsInfo*)std::calloc(1, sizeof(ScsInfo));
     
     // util stuff
     using tomo_internal::ltrilinindex;
-    const SCS::scs_float SQRT2 = boost::math::constants::root_two<SCS::scs_float>();
-    const SCS::scs_float ONE = SCS::scs_float(1);
+    const scs_float SQRT2 = boost::math::constants::root_two<scs_float>();
+    const scs_float ONE = scs_float(1);
 
 
     // cones:
@@ -286,27 +286,27 @@ public:
     // zRtri and zItri are *strictly lower triangular elements* of rho(=z),
     // picked column-wise. (I.e., iterate linearly using  for (ip=0..d) { for (i=ip+1..d) { ... } })
 
-    const SCS::scs_int dvmu = 1;
-    const SCS::scs_int dvzRdiag = DimX;
-    const SCS::scs_int dvzRtri = DimX*(DimX-1)/2;
-    const SCS::scs_int dvzItri = dvzRtri; // == DimX*(DimX-1)/2;
+    const scs_int dvmu = 1;
+    const scs_int dvzRdiag = DimX;
+    const scs_int dvzRtri = DimX*(DimX-1)/2;
+    const scs_int dvzItri = dvzRtri; // == DimX*(DimX-1)/2;
 
-    const SCS::scs_int var_mu_offset = 0;
-    const SCS::scs_int var_zRdiag_offset = var_mu_offset + dvmu;
-    const SCS::scs_int var_zRtri_offset = var_zRdiag_offset + dvzRdiag;
-    const SCS::scs_int var_zItri_offset = var_zRtri_offset + dvzRtri;
+    const scs_int var_mu_offset = 0;
+    const scs_int var_zRdiag_offset = var_mu_offset + dvmu;
+    const scs_int var_zRtri_offset = var_zRdiag_offset + dvzRdiag;
+    const scs_int var_zItri_offset = var_zRtri_offset + dvzRtri;
 
     // dimension of each semidefinite constraint block (matrix dimension)
-    const SCS::scs_int dC1 = 2*DimX;
-    const SCS::scs_int dC2 = 2*(1+DimXX);
+    const scs_int dC1 = 2*DimX;
+    const scs_int dC2 = 2*(1+DimXX);
     // # of degrees of freedom of each constraint block (== number of corresponding rows in A)
-    const SCS::scs_int dC0x = 1;
-    const SCS::scs_int dC1x = dC1*(dC1+1)/2;
-    const SCS::scs_int dC2x = dC2*(dC2+1)/2;
+    const scs_int dC0x = 1;
+    const scs_int dC1x = dC1*(dC1+1)/2;
+    const scs_int dC2x = dC2*(dC2+1)/2;
     // offset for each constraint number
-    const SCS::scs_int con_offset_0 = 0;
-    const SCS::scs_int con_offset_1 = con_offset_0+dC0x;
-    const SCS::scs_int con_offset_2 = con_offset_1+dC1x;
+    const scs_int con_offset_0 = 0;
+    const scs_int con_offset_1 = con_offset_0+dC0x;
+    const scs_int con_offset_2 = con_offset_1+dC1x;
 
     // Objective:
     // ----------
@@ -318,7 +318,7 @@ public:
     // Prepare the A matrix and bVec:
     // ------------------------------
     
-    typedef Eigen::Triplet<SCS::scs_float> TT;
+    typedef Eigen::Triplet<scs_float> TT;
     std::vector<TT> AT; // prepare triplets for sparse A matrix
     // total number of entries in the A matrix (just count the number of
     // push_back's below. Doesn't have to be exact, actually, an estimate would
@@ -333,8 +333,8 @@ public:
     //   **  number of columns = 1 + DimX*DimX = # of variable degrees of freedom
     //       == 1 + dzR + dzI  (dzR = DimX*(DimX+1)/2 , dzI = DimX*(DimX-1)/2)
 
-    SCS::scs_int i, j, ip, jp, ij, k;
-    SCS::scs_int trivarno;
+    scs_int i, j, ip, jp, ij, k;
+    scs_int trivarno;
 
     logger.longdebug([&](std::ostream & stream) {
         stream << "constraint 0 ... ";
@@ -474,7 +474,7 @@ public:
   {
     // free workspace variables
     if (work != NULL) {
-      SCS::scs_finish(work);
+      scs_finish(work);
     }
     // free other structures
     if (cone != NULL) {
@@ -530,8 +530,8 @@ public:
     return factorizeChoiMatrix(E_YR, Tomographer::Logger::vacuum_logger) ;
   }
   
-  inline SCS::scs_int dimX() const { return DimX; }
-  inline SCS::scs_int dimXX() const { return DimXX; }
+  inline scs_int dimX() const { return DimX; }
+  inline scs_int dimXX() const { return DimXX; }
 
   RealScalarType calculate()
   {
@@ -545,14 +545,14 @@ public:
     auto logger = _logger.subLogger(TOMO_ORIGIN);
   
     // Now solve!
-    SCS::scs_int status = SCS::scs_solve(work, data, cone, sol, info);
+    scs_int status = scs_solve(work, data, cone, sol, info);
 
     // Check that the SDP converged.
     if (status != SCS_SOLVED) {
       logger.warning("SCS could not solve the SDP: ended with status %s (code %d)", info->status, status);
     }
 
-    SCS::scs_float fid = (info->pobj + info->dobj)/2;
+    scs_float fid = (info->pobj + info->dobj)/2;
     logger.longdebug("[%s] code %d solution is fid=%f", info->status, (int)status, (double)fid);
 
     return fid;
@@ -613,16 +613,16 @@ private:
     std::ostringstream stream;
 
     // dimension of each semidefinite constraint block (matrix dimension)
-    const SCS::scs_int dC1 = 2*DimX;
-    const SCS::scs_int dC2 = 2*(1+DimXX);
+    const scs_int dC1 = 2*DimX;
+    const scs_int dC2 = 2*(1+DimXX);
     // # of degrees of freedom of each constraint block (== number of corresponding rows in A)
-    const SCS::scs_int dC0x = 1;
-    const SCS::scs_int dC1x = dC1*(dC1+1)/2;
-    const SCS::scs_int dC2x = dC2*(dC2+1)/2;
+    const scs_int dC0x = 1;
+    const scs_int dC1x = dC1*(dC1+1)/2;
+    const scs_int dC2x = dC2*(dC2+1)/2;
     // offset for each constraint number
-    const SCS::scs_int con_offset_0 = 0;
-    const SCS::scs_int con_offset_1 = con_offset_0+dC0x;
-    const SCS::scs_int con_offset_2 = con_offset_1+dC1x;
+    const scs_int con_offset_0 = 0;
+    const scs_int con_offset_1 = con_offset_0+dC0x;
+    const scs_int con_offset_2 = con_offset_1+dC1x;
 
     // the labels come first
 
@@ -718,7 +718,7 @@ public:
     // unlike with the diamond norm, we can't re-use the same matrix
     // factorization from one call to another because the SDP's main matrix
     // depends on the channel E itself. Hopefully this is no big deal
-    typedef WorstEntglFidelitySCSSolver<SCS::scs_float>  MyWorstEntglFidSCSSolver;
+    typedef WorstEntglFidelitySCSSolver<scs_float>  MyWorstEntglFidSCSSolver;
     MyWorstEntglFidSCSSolver fidslv(dimX, M, epsilon, Tomographer::Logger::vacuum_logger);
 
     return fidslv.calculate();
@@ -769,8 +769,8 @@ public:
     // unlike with the diamond norm, we can't re-use the same matrix
     // factorization from one call to another because the SDP's main matrix
     // depends on the channel E itself. Hopefully this is no big deal
-    WorstEntglFidelitySCSSolver<SCS::scs_float> fidslv(cht.dimX(), T, epsilon,
-                                                       Tomographer::Logger::vacuum_logger);
+    WorstEntglFidelitySCSSolver<scs_float> fidslv(cht.dimX(), T, epsilon,
+                                                  Tomographer::Logger::vacuum_logger);
 
     return fidslv.calculate();
   }

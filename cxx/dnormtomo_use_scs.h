@@ -16,20 +16,20 @@
 //
 
 
-namespace SCS {
+//namespace SCS {
   extern "C" {
 #   include <scs.h>
-#   include <linSys.h>
+#   include <linsys.h>
 #   include <linsys/amatrix.h>
   }
-} // namespace SCS
+//} // namespace SCS
 
 
 
 
 
 namespace tomo_internal {
-inline SCS::scs_int ltrilinindex(SCS::scs_int i, SCS::scs_int j, SCS::scs_int d)
+inline scs_int ltrilinindex(scs_int i, scs_int j, scs_int d)
 {
   assert(i >= j && i < d);
   // Drafts & Calculations Vol VI ~60% 11/29/2016
