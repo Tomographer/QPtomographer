@@ -13,8 +13,6 @@ Theory: see arXiv:XXXX.XXXXX
 Download (or clone) [SCS ≥ 2.0](https://github.com/cvxgrp/scs), say to
 `$HOME/Downloads/scs`, and compile it as follows:
 
-First, edit the file `scs.mk` as follows:
-
     > make CTRLC=0 USE_OPENMP=0 USE_LAPACK=1
 
 On some systems such as on *Mac OS X*, you might have to adjust or specify the
