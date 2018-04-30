@@ -53,7 +53,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/dnormtomo)
 file(COPY ${CMAKE_SOURCE_DIR}/dnormtomo/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/dnormtomo
   FILES_MATCHING PATTERN *.py)
 
-find_package(pybind11 REQUIRED)
+find_package(pybind11 2.2 REQUIRED)
 
 # === Python interface -- pydnormbistates
 pybind11_add_module(bistates MODULE cxx/pydnormbistates.cxx NO_EXTRAS)
@@ -63,6 +63,16 @@ set_target_properties(bistates PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURR
 target_include_directories(bistates PUBLIC  ${SCS_INCLUDE_DIRS})
 target_link_libraries(bistates PUBLIC ${SCS_DIR_LIBRARIES})
 target_link_libraries(bistates PUBLIC TomographerPy::TomographerPy Threads::Threads)
+
+
+# === Python interface -- pyfigofmerit
+pybind11_add_module(figofmerit MODULE cxx/pyfigofmerit.cxx NO_EXTRAS)
+
+set_target_properties(figofmerit PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/dnormtomo")
+
+target_include_directories(figofmerit PUBLIC  ${SCS_INCLUDE_DIRS})
+target_link_libraries(figofmerit PUBLIC ${SCS_DIR_LIBRARIES})
+target_link_libraries(figofmerit PUBLIC TomographerPy::TomographerPy)
 
 
 # === Python interface -- pydnormchannelspace

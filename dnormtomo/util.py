@@ -1,4 +1,6 @@
 
+# -*- coding: utf-8 -*-
+
 """
 Utility routines for reliable process tomography.
 """
@@ -8,7 +10,7 @@ import qutip
 
 
 # A namespace to hold attributes
-class _Store:
+class _Store(object):
     def __init__(self, **kwargs):
         super(_Store, self).__init__()
         self.__dict__.update(kwargs)
