@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Practical and reliable process tomography'
-copyright = '2017, Philippe Faist'
+copyright = '2018, Philippe Faist'
 author = 'Philippe Faist'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -100,10 +100,10 @@ html_theme = 'alabaster'
 # documentation.
 #
 html_theme_options = {
-    'font_family': '"Source Sans Pro", sans-serif',
+    'font_family': '"PT Serif", sans-serif',
     'font_size': '16px',
-    'head_font_family': '"Source Sans Pro", sans-serif',
-    'code_font_family': '"Source Sans Pro", monospace',
+    'head_font_family': '"Roboto", sans-serif',
+    'code_font_family': '"Roboto", monospace',
     'code_font_size': '0.9em',
 }
 

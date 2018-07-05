@@ -21,7 +21,7 @@ message(WARNING "
   
     > python setup.py install
   
-  Check out the README file for more information.
+  Check out the README.md file for more information.
   ============================================================================
 ")
 
@@ -33,7 +33,7 @@ find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
 find_package(Threads REQUIRED)
 
-find_package(TomographerPy 5.3 REQUIRED)
+find_package(TomographerPy 5.4 REQUIRED)
 
 
 include_directories(${SCS_INCLUDE_DIRS})
