@@ -15,7 +15,7 @@
 #include <tomographer/tools/needownoperatornew.h>
 #include <tomographer/tools/cxxutil.h>
 
-#include "dnormtomo_use_scs.h"
+#include "qptomo_use_scs.h"
 #include "utils.h"
 
 
@@ -289,7 +289,7 @@ public:
     const scs_int dvmu = 1;
     const scs_int dvzRdiag = DimX;
     const scs_int dvzRtri = DimX*(DimX-1)/2;
-    const scs_int dvzItri = dvzRtri; // == DimX*(DimX-1)/2;
+    //const scs_int dvzItri = dvzRtri; // == DimX*(DimX-1)/2;
 
     const scs_int var_mu_offset = 0;
     const scs_int var_zRdiag_offset = var_mu_offset + dvmu;
@@ -333,7 +333,7 @@ public:
     //   **  number of columns = 1 + DimX*DimX = # of variable degrees of freedom
     //       == 1 + dzR + dzI  (dzR = DimX*(DimX+1)/2 , dzI = DimX*(DimX-1)/2)
 
-    scs_int i, j, ip, jp, ij, k;
+    scs_int i, ip, jp, ij, k;
     scs_int trivarno;
 
     logger.longdebug([&](std::ostream & stream) {
@@ -573,8 +573,8 @@ private:
 
     std::vector<std::vector<std::string> > fmtall;
     fmtall.resize(Amat.rows());
-    int w = 0;
-    int i, j;
+    std::size_t w = 0;
+    Eigen::Index i, j;
     for (i = 0; i < Amat.rows(); ++i) {
       fmtall[i].resize(Amat.cols());
       for (j = 0; j < Amat.cols(); ++j) {
@@ -592,7 +592,9 @@ private:
     fmtall.insert(fmtall.begin(), std::vector<std::string>());
     fmtall[0].resize(1+DimX*DimX);
     fmtall[0][0] = "mu  ";
-    for (i = 0; i < DimX; ++i) { fmtall[0][1+i] = "rhoR("+std::to_string(i)+","+std::to_string(i)+")  "; }
+    for (i = 0; i < DimX; ++i) {
+      fmtall[0][1+i] = "rhoR("+std::to_string(i)+","+std::to_string(i)+")  ";
+    }
     int varcount = 0;
     for (j = 0; j < DimX; ++j) {
       for (i = j+1; i < DimX; ++i) {
@@ -603,9 +605,9 @@ private:
 
     std::vector<std::string> lines;
     lines.resize(fmtall.size());
-    for (i = 0; i < fmtall.size(); ++i) {
+    for (i = 0; i < (Eigen::Index)fmtall.size(); ++i) {
       lines[i] = std::string();
-      for (j = 0; j < fmtall[i].size(); ++j) {
+      for (j = 0; j < (Eigen::Index)fmtall[i].size(); ++j) {
         lines[i] += std::string(w - fmtall[i][j].size(), ' ') + fmtall[i][j];
       }
     }
@@ -616,13 +618,13 @@ private:
     const scs_int dC1 = 2*DimX;
     const scs_int dC2 = 2*(1+DimXX);
     // # of degrees of freedom of each constraint block (== number of corresponding rows in A)
-    const scs_int dC0x = 1;
-    const scs_int dC1x = dC1*(dC1+1)/2;
-    const scs_int dC2x = dC2*(dC2+1)/2;
+    //const scs_int dC0x = 1;
+    //const scs_int dC1x = dC1*(dC1+1)/2;
+    //const scs_int dC2x = dC2*(dC2+1)/2;
     // offset for each constraint number
-    const scs_int con_offset_0 = 0;
-    const scs_int con_offset_1 = con_offset_0+dC0x;
-    const scs_int con_offset_2 = con_offset_1+dC1x;
+    //const scs_int con_offset_0 = 0;
+    //const scs_int con_offset_1 = con_offset_0+dC0x;
+    //const scs_int con_offset_2 = con_offset_1+dC1x;
 
     // the labels come first
 

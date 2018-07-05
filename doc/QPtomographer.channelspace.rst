@@ -1,9 +1,9 @@
 
 
-Channel-space sampling method: `dnormtomo.channelspace`
-=======================================================
+Channel-space sampling method: `QPtomographer.channelspace`
+===========================================================
 
-.. py:module:: dnormtomo.channelspace
+.. py:module:: QPtomographer.channelspace
 
 This module implements the channel-space sampling method for the reliable
 diamond norm estimation.
@@ -75,8 +75,8 @@ diamond norm estimation.
         sweeps.  Specify as a :py:class:`tomographer.MHRWParams` object.
 
       - `channel_walker_jump_mode`: one of
-        :py:data:`~dnormtomo.channelspace.RandHermExp` or
-        :py:data:`~dnormtomo.channelspace.ElemRotations`, depending on the
+        :py:data:`~QPtomographer.channelspace.RandHermExp` or
+        :py:data:`~QPtomographer.channelspace.ElemRotations`, depending on the
         requested method of random walk step.
 
       - `dnorm_epsilon`: the precision at which to calculate the diamond norm
@@ -101,19 +101,19 @@ diamond norm estimation.
    Numerical constant which signifies to carry out the random walk using the
    ":math:`e^{iH}` jumps mode" (see paper).  This value can be specified to the
    `channel_walker_jump_mode=` argument of
-   :py:func:`~dnormtomo.channelspace.run()`.
+   :py:func:`~QPtomographer.channelspace.run()`.
 
 .. py:data:: ElemRotations
 
    Numerical constant which signifies to carry out the random walk using the
    "elementary rotations jumps mode" (see paper).  This value can be specified
    to the `channel_walker_jump_mode=` argument of
-   :py:func:`~dnormtomo.channelspace.run()`.
+   :py:func:`~QPtomographer.channelspace.run()`.
 
 
 .. py:exception:: DNormChannelSpaceInvalidInputError
 
    Exception is thrown whenever invalid input to the
-   :py:func:`~dnormtomo.channelspace.run()` function is encountered.
+   :py:func:`~QPtomographer.channelspace.run()` function is encountered.
 
 

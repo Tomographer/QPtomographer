@@ -36,18 +36,18 @@ struct ChannelTypes : public Tomographer::DenseDM::DMTypes<Eigen::Dynamic,Scalar
   typedef Eigen::Matrix<ComplexScalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> VIsometryType;
 
 private:
-  std::size_t dim_x;
-  std::size_t dim_y;
+  Eigen::Index dim_x;
+  Eigen::Index dim_y;
 
 public:
-  ChannelTypes(std::size_t dim_x_, std::size_t dim_y_)
+  ChannelTypes(Eigen::Index dim_x_, Eigen::Index dim_y_)
     : Base(dim_x_*dim_y_), dim_x(dim_x_), dim_y(dim_y_)
   {
   }
 
-  inline std::size_t dimX() const { return dim_x; }
-  inline std::size_t dimY() const { return dim_y; }
-  inline std::size_t dimXY2() const { return Base::dim()*dim_y; }
+  inline Eigen::Index dimX() const { return dim_x; }
+  inline Eigen::Index dimY() const { return dim_y; }
+  inline Eigen::Index dimXY2() const { return Base::dim()*dim_y; }
 
 };
 

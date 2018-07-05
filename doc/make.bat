@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=dnormtomo
+set SPHINXPROJ=QPtomographer
 
 if "%1" == "" goto help
 

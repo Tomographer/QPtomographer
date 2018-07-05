@@ -1,8 +1,8 @@
 
-Bipartite sampling method: `dnormtomo.bistates`
-===============================================
+Bipartite sampling method: `QPtomographer.bistates`
+===================================================
 
-.. py:module:: dnormtomo.bistates
+.. py:module:: QPtomographer.bistates
 
 This module implements the bipartite state sampling method for the reliable
 diamond norm estimation.
@@ -97,6 +97,6 @@ diamond norm estimation.
 .. py:exception:: DNormBiStatesInvalidInputError
 
    Exception is thrown whenever invalid input to the
-   :py:func:`~dnormtomo.bistates.run()` function is encountered.
+   :py:func:`~QPtomographer.bistates.run()` function is encountered.
 
 

@@ -171,8 +171,8 @@ def simulate_process_prep_measure(E_AB, prep_meas_settings):
     `num_repeats` is the number of times to repeat this setting.
 
     Returns: an object `d` with properties `d.Emn_ch`, `d.Nm`, representing the
-    arguments suitable for `dnormtomo.channelspace.run()` and the simulated
-    frequency counts.
+    arguments suitable for :py:meth:`QPtomographer.channelspace.run()` and the
+    simulated frequency counts.
     """
 
     Emn_ch = []

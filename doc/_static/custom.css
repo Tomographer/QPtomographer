@@ -1,16 +1,26 @@
 
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i');
+@import url('https://fonts.googleapis.com/css?family=PT+Serif:400,400i,700,700i|Roboto:300,400,400i,500');
 
 body {
     font-weight: 400;
 }
 
+a, a:hover {
+    text-decoration: none;
+}
 
 .logo {
     padding-bottom: 0.75em;
 }
 div.sphinxsidebar .logo a {
     border-bottom: none 0px;
+}
+.sphinxsidebar .toctree-l1 {
+    padding-bottom: 0.5em;
+    list-style: disc;
+}
+div.sphinxsidebarwrapper .caption-text {
+    display: none;
 }
 
 div.body h1 {
@@ -19,14 +29,39 @@ div.body h1 {
 div.body h2 {
     margin-bottom: 0.5em;
 }
+#indices-and-tables {
+    margin-top: 2.5em;
+}
 
 pre {
-    background-color: inherit;
     border-left: solid 1em rgba(0,0,80,0.1);
     padding: 5px 1.5em;
 }
 dl pre, blockquote pre, li pre {
     padding-left: 1.3em;
+}
+pre, tt, code {
+    font-weight: 400;
+}
+code.xref, a code {
+    font-weight: 500;
+    /*color: rgba(0, 65, 114, 1.0);*/
+    border-bottom: 1px dotted #004B6B;
+}
+tt.descname, code.descname {
+    padding: 0px;
+    font-weight: 500;
+}
+tt.descclassname, code.descclassname {
+    padding: 0px;
+    font-weight: 300;
+}
+
+pre, tt, code {
+    background-color: rgba(0,0,80,0.06);
+}
+tt, code {
+    padding: 1px 2px;
 }
 
 
@@ -36,17 +71,35 @@ div.section > dl > dt {
     border-top: solid 0.25em rgba(0,40,70,0.5);
 }
 
-
-
-.sphinxsidebar .toctree-l1 {
-    padding-bottom: 0.5em;
-    list-style: disc;
+div.important {
+    background-color: rgba(255,207,0,0.15);
+    border: 1px solid rgba(255,207,0,0.5);
 }
 
-.genindextable {
-    font-size: 0.8em;
-}
 
+div.genindex-jumpbox {
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    border: solid 0.5px rgba(62, 67, 73, 0.4);
+}
+div.genindex-jumpbox a {
+    text-decoration: none;
+    display: inline-block;
+    padding: 2px;
+}
+div.body .genindextable {
+    font-size: 0.9em;
+}
+#index ~ h2 {
+    font-size: 1.3em;
+    font-weight: 500;
+    margin: 0.5em 0px 0px;
+    border-bottom: solid 0.5px rgba(62, 67, 73, 0.4);
+}
+.genindextable ul {
+    text-indent: -1.2em;
+    margin-left: 1.2em;
+}
 
 /* @media screen and (max-width: 870px) { */
 .docutils.field-list > tbody > tr > th.field-name {

@@ -6,8 +6,8 @@ Figures of Merit for Channels
 
 The current package has built-in capability for computing the following figures
 of merit.  The choice of the figure of merit can be specified using the
-`fig_of_merit=` parameter to :py:func:`dnormtomo.bistates.run()` or
-:py:func:`dnormtomo.channelspace.run()`.
+`fig_of_merit=` parameter to :py:func:`QPtomographer.bistates.run()` or
+:py:func:`QPtomographer.channelspace.run()`.
 
 
 The diamond norm distance

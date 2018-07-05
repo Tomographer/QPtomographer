@@ -33,7 +33,7 @@ You need `tomographer` version ≥ 5.4.
 [tomographer_py_inst]: https://tomographer.github.io/tomographer/get-started/#python-version
 
 
-## Building and installing `dnormtomo`
+## Building and installing `QPtomographer`
 
 You should only have to run
 
@@ -46,24 +46,24 @@ Or, to install as administrator,
 
     > sudo -H SCS_ROOT=$HOME/Downloads/scs python setup.py install
 
-The good news is that `dnormtomo`'s setup script automatically picks up all the
-C++ flags set for `tomographer` itself, and uses those same flags. Thus, if
-`tomographer` compiled, `dnormtomo` should compile as well (just make sure you
-use the same compiler).
+The good news is that `QPtomographer`'s setup script automatically picks up all
+the C++ flags set for `tomographer` itself, and uses those same flags. Thus, if
+`tomographer` compiled, `QPtomographer` should compile as well (just make sure
+you use the same compiler).
 
 ### NOTE: Installing using `pip`
-You can also install `dnormtomo` using `pip`, so that it is properly seen as a
+You can also install `QPtomographer` using `pip`, so that it is properly seen as a
 package and can be uninstalled easily.  For that, build a source package and
 install it by running the following commands:
 
-    > SCS_ROOT=$HOME/Downloads/scs python setup.py sdist  # creates dist/dnormtomo-1.0.tar.gz
-    > SCS_ROOT=$HOME/Downloads/scs pip install dist/dnormtomo-1.0.tar.gz  # might need sudo -H as above
+    > SCS_ROOT=$HOME/Downloads/scs python setup.py sdist  # creates dist/QPtomographer-1.0.tar.gz
+    > SCS_ROOT=$HOME/Downloads/scs pip install dist/QPtomographer-1.0.tar.gz  # might need sudo -H as above
 
-Then `dnormtomo` is seen as an installed wheel package, which has a certain
+Then `QPtomographer` is seen as an installed wheel package, which has a certain
 number of advantages.  For instance, you can uninstall easily with `pip
-uninstall dnormtomo`.
+uninstall QPtomographer`.
 
 
 # License
 
-`dnormtomo` is released under the MIT License (see `LICENSE.txt`).
+`QPtomographer` is released under the MIT License (see `LICENSE.txt`).
