@@ -30,7 +30,7 @@ except ImportError:
 # version check
 import tomographer.version
 if tomographer.version.version_info < (5, 3):
-    raise RuntimeError("ERROR: dnormtomo requires `tomographer` >= 5.3. "
+    raise RuntimeError("ERROR: QPtomographer requires `tomographer` >= 5.3. "
                        "Please upgrade `tomographer`.")
 
 import tomographer.include # tomographer.include.get_include()
@@ -107,23 +107,23 @@ common_headers = [
 #
 # Read version info
 #
-from dnormtomo._version import version
+from QPtomographer._version import version
 
 
 #
 # Set up the python package
 #
 
-setup(name="dnormtomo",
+setup(name="QPtomographer",
       version=version,
       author='Philippe Faist',
       author_email='phfaist@caltech.edu',
       description='Reliable Diamond Norm Estimation for Quantum Process Tomography',
       packages=[
-          'dnormtomo'
+          'QPtomographer'
       ],
       ext_modules=[
-          Extension(name="dnormtomo.channelspace",
+          Extension(name="QPtomographer.channelspace",
                     sources=['cxx/pydnormchannelspace.cxx'],
                     library_dirs=[],
                     libraries=[],
@@ -132,7 +132,7 @@ setup(name="dnormtomo",
                     extra_link_args=ldflags,
                     language='c++',
                     depends=common_headers),
-          Extension(name="dnormtomo.bistates",
+          Extension(name="QPtomographer.bistates",
                     sources=['cxx/pydnormbistates.cxx'],
                     library_dirs=[],
                     libraries=[],
@@ -141,7 +141,7 @@ setup(name="dnormtomo",
                     extra_link_args=ldflags,
                     language='c++',
                     depends=common_headers),
-          Extension(name="dnormtomo.figofmerit",
+          Extension(name="QPtomographer.figofmerit",
                     sources=['cxx/pyfigofmerit.cxx'],
                     library_dirs=[],
                     libraries=[],

@@ -6,9 +6,9 @@ import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 
-import dnormtomo.channelspace
-import dnormtomo.bistates
-import dnormtomo.util
+import QPtomographer.channelspace
+import QPtomographer.bistates
+import QPtomographer.util
 
 import qutip
 
@@ -24,7 +24,7 @@ NumSamplesPerSetting = 500
 # Pauli measurement settings on one system
 PauliMeasSettings = [
     [
-        dnormtomo.util.projpauli(i, s)
+        QPtomographer.util.projpauli(i, s)
         for s in [1, -1]
     ]
     for i in [1, 2, 3]
@@ -37,7 +37,7 @@ Ereal_XY = qutip.Qobj(np.array([[ 0.95, 0, 0, 0.95],
                                 [ 0.95, 0, 0, 1],
                                ]), dims=[[2,2],[2,2]])
 
-d = dnormtomo.util.simulate_process_measurements(sigmareal_X, Ereal_XY, PauliMeasSettings, PauliMeasSettings,
+d = QPtomographer.util.simulate_process_measurements(sigmareal_X, Ereal_XY, PauliMeasSettings, PauliMeasSettings,
                                                  NumSamplesPerSetting)
 
 
@@ -45,7 +45,7 @@ d = dnormtomo.util.simulate_process_measurements(sigmareal_X, Ereal_XY, PauliMea
 
 r_naiveopt = None
 with tomographer.jpyutil.RandWalkProgressBar() as prg:
-    r_naiveopt = dnormtomo.bistates.run(
+    r_naiveopt = QPtomographer.bistates.run(
         dimX=2, dimY=2, Emn=d.Emn, Nm=np.array(d.Nm),
         hist_params=tomographer.HistogramParams(0, 0.2, 50),
         mhrw_params=tomographer.MHRWParams(0.008, 512, 32768, 32768), # thermalize a lot
@@ -73,10 +73,10 @@ Emn_for_channelspace = [
 
 r_elr = None
 with tomographer.jpyutil.RandWalkProgressBar() as prg:
-    r_elr = dnormtomo.channelspace.run(
+    r_elr = QPtomographer.channelspace.run(
         dimX=2, dimY=2, Emn=Emn_for_channelspace, Nm=np.array(d.Nm),
         hist_params=tomographer.UniformBinsHistogramParams(0, 0.2, 50),
-        channel_walker_jump_mode=dnormtomo.channelspace.ElemRotations,
+        channel_walker_jump_mode=QPtomographer.channelspace.ElemRotations,
         mhrw_params=tomographer.MHRWParams(0.02, 50, 2048, 32768),
         progress_fn=prg.progress_fn
         )

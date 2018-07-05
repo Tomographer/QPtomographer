@@ -1,18 +1,9 @@
 
-#ifndef DNORMTOMO_USE_SCS
-#define DNORMTOMO_USE_SCS
+#ifndef QPTOMO_USE_SCS
+#define QPTOMO_USE_SCS
 
 //
-// NOTES: INSTRUCTIONS FOR COMPILING SCS: EDIT YOUR scs-X.Y.Z/scs.mk, AND FIND AND CHANGE
-// THE FOLLOWING VARIABLES TO READ:
-//
-// ...
-// CTRLC = 0
-// ...
-// USE_OPENMP = 0
-// ...
-// USE_LAPACK = 1
-// ...
+// NOTE: INSTRUCTIONS FOR COMPILING SCS CAN BE FOUND IN OUR MAIN "README.TXT"
 //
 
 
@@ -23,7 +14,6 @@
 #   include <linsys/amatrix.h>
   }
 //} // namespace SCS
-
 
 
 

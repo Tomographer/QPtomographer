@@ -15,7 +15,7 @@
 #include <tomographer/tools/needownoperatornew.h>
 #include <tomographer/tools/cxxutil.h>
 
-#include "dnormtomo_use_scs.h"
+#include "qptomo_use_scs.h"
 #include "utils.h"
 
 

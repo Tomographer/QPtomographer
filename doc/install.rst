@@ -2,8 +2,8 @@
 Installation instructions
 -------------------------
 
-The `dnormtomo` package is uses the standard `setuptools` Python infrastructure,
-providing a `setup.py` script like most other Python packages.
+The `QPtomographer` package is uses the standard `setuptools` Python
+infrastructure, providing a `setup.py` script like most other Python packages.
 
 There are some little things to set up first however.
 
@@ -71,8 +71,8 @@ Make sure you have already installed the `tomographer` package (version ≥ 5.4)
 
 
 
-Building and installing `dnormtomo`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Building and installing `QPtomographer`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Simply run::
 

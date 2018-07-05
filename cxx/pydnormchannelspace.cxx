@@ -1,7 +1,7 @@
 
 //
-// dnormtomo.channelspace -- Python module for determining the distribution of the diamond
-// norm for reliable quantum process tomography
+// QPtomographer.channelspace -- Python module for determining the distribution
+// of the diamond norm for reliable quantum process tomography
 //
 // Requires the `tomographer` python package to be installed, version >= 5.4
 //
@@ -553,10 +553,10 @@ PYBIND11_MODULE(channelspace, m)
 
   pylogger = new tpy::PyLogger; // ownership will be taken over by Python/PyBind11
 
-  pylogger->initPythonLogger("dnormtomo.channelspace");
+  pylogger->initPythonLogger("QPtomographer.channelspace");
   auto logger = Tomographer::Logger::makeLocalLogger(TOMO_ORIGIN, *pylogger);
 
-  logger.debug("INIT DNORMTOMO.CHANNELSPACE");
+  logger.debug("INIT QPTOMOGRAPHER.CHANNELSPACE");
 
   logger.debug("initializing global objects and constants, cxxlogger...");
 

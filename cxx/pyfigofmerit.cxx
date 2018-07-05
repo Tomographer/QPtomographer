@@ -1,7 +1,7 @@
 
 //
-// dnormtomo.figofmerit -- Python module for calculating figures of merit like
-// the diamond norm and the entanglement fidelity.
+// QPtomographer.figofmerit -- Python module for calculating figures of merit
+// like the diamond norm and the entanglement fidelity.
 //
 
 #include <tomographerpy/common.h>
@@ -151,10 +151,10 @@ PYBIND11_MODULE(figofmerit, m)
 
   pylogger = new tpy::PyLogger; // ownership will be taken over by Python/PyBind11
 
-  pylogger->initPythonLogger("dnormtomo.figofmerit");
+  pylogger->initPythonLogger("QPtomographer.figofmerit");
   auto logger = Tomographer::Logger::makeLocalLogger(TOMO_ORIGIN, *pylogger);
 
-  logger.debug("INIT DNORMTOMO.FIGOFMERIT");
+  logger.debug("INIT QPTOMOGRAPHER.FIGOFMERIT");
 
   // the main run call:
   // m.def(

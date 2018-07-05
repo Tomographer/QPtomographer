@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(dnormtomo)
+project(QPtomographer)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -17,7 +17,7 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "C++ flags for relwithd
 message(WARNING "
   ============================================================================
   This CMake script is only intended for development and debugging. To install
-  the `dnormtomo` python package, you should use the setup script, e.g.:
+  the `QPtomographer` python package, you should use the setup script, e.g.:
   
     > python setup.py install
   
@@ -47,10 +47,10 @@ include_directories(${TOMOGRAPHER_INCLUDE_DIR})
 
 # === PYTHON PACKAGE ===
 
-# copy the skeleton module & all python sources into custom `dnormtomo`
+# copy the skeleton module & all python sources into custom `QPtomographer`
 # directory:
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/dnormtomo)
-file(COPY ${CMAKE_SOURCE_DIR}/dnormtomo/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/dnormtomo
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/QPtomographer)
+file(COPY ${CMAKE_SOURCE_DIR}/QPtomographer/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/QPtomographer
   FILES_MATCHING PATTERN *.py)
 
 find_package(pybind11 2.2 REQUIRED)
@@ -58,7 +58,7 @@ find_package(pybind11 2.2 REQUIRED)
 # === Python interface -- pydnormbistates
 pybind11_add_module(bistates MODULE cxx/pydnormbistates.cxx NO_EXTRAS)
 
-set_target_properties(bistates PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/dnormtomo")
+set_target_properties(bistates PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/QPtomographer")
 
 target_include_directories(bistates PUBLIC  ${SCS_INCLUDE_DIRS})
 target_link_libraries(bistates PUBLIC ${SCS_DIR_LIBRARIES})
@@ -68,7 +68,7 @@ target_link_libraries(bistates PUBLIC TomographerPy::TomographerPy Threads::Thre
 # === Python interface -- pyfigofmerit
 pybind11_add_module(figofmerit MODULE cxx/pyfigofmerit.cxx NO_EXTRAS)
 
-set_target_properties(figofmerit PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/dnormtomo")
+set_target_properties(figofmerit PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/QPtomographer")
 
 target_include_directories(figofmerit PUBLIC  ${SCS_INCLUDE_DIRS})
 target_link_libraries(figofmerit PUBLIC ${SCS_DIR_LIBRARIES})
@@ -78,7 +78,7 @@ target_link_libraries(figofmerit PUBLIC TomographerPy::TomographerPy)
 # === Python interface -- pydnormchannelspace
 pybind11_add_module(channelspace MODULE cxx/pydnormchannelspace.cxx NO_EXTRAS)
 
-set_target_properties(channelspace PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/dnormtomo")
+set_target_properties(channelspace PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/QPtomographer")
 
 target_include_directories(channelspace PUBLIC  ${SCS_INCLUDE_DIRS})
 target_link_libraries(channelspace PUBLIC ${SCS_DIR_LIBRARIES})

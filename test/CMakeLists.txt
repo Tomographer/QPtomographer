@@ -65,13 +65,13 @@ add_test(NAME test_channelspace
 # test that we can load and execute the python modules
 #
 
-add_test(NAME test_pyload_dnormtomo_bistates
-  COMMAND ${PYTHON_EXECUTABLE} -c "import dnormtomo; print('dnormtomo: {}'.format(dnormtomo.__version__)); import sys; import numpy as np; import tomographer; import dnormtomo.bistates; dnormtomo.bistates.run(dimX=2,dimY=2,Emn=[np.diag([1,0,0,0])],Nm=[1000],hist_params=tomographer.HistogramParams(0,1,10),mhrw_params=tomographer.MHRWParams(0.001,1000,1024,4096),progress_fn=lambda x:sys.stdout.write(x.getHumanReport()+'\\n'))"
+add_test(NAME test_pyload_QPtomographer_bistates
+  COMMAND ${PYTHON_EXECUTABLE} -c "import QPtomographer; print('QPtomographer: {}'.format(QPtomographer.__version__)); import sys; import numpy as np; import tomographer; import QPtomographer.bistates; QPtomographer.bistates.run(dimX=2,dimY=2,Emn=[np.diag([1,0,0,0])],Nm=[1000],hist_params=tomographer.HistogramParams(0,1,10),mhrw_params=tomographer.MHRWParams(0.001,1000,1024,4096),progress_fn=lambda x:sys.stdout.write(x.getHumanReport()+'\\n'))"
   )
-set_tests_properties(test_pyload_dnormtomo_bistates PROPERTIES  ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR})
+set_tests_properties(test_pyload_QPtomographer_bistates PROPERTIES  ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR})
 
-add_test(NAME test_pyload_dnormtomo_channelspace
-  COMMAND ${PYTHON_EXECUTABLE} -c "import dnormtomo; print('dnormtomo: {}'.format(dnormtomo.__version__)); import sys; import numpy as np; import tomographer; import dnormtomo.channelspace; dnormtomo.channelspace.run(dimX=2,dimY=2,Emn=[np.diag([1,0,0,0])],Nm=[1000],hist_params=tomographer.HistogramParams(0,1,10),mhrw_params=tomographer.MHRWParams(0.001,1000,1024,4096),progress_fn=lambda x:sys.stdout.write(x.getHumanReport()+'\\n'))"
+add_test(NAME test_pyload_QPtomographer_channelspace
+  COMMAND ${PYTHON_EXECUTABLE} -c "import QPtomographer; print('QPtomographer: {}'.format(QPtomographer.__version__)); import sys; import numpy as np; import tomographer; import QPtomographer.channelspace; QPtomographer.channelspace.run(dimX=2,dimY=2,Emn=[np.diag([1,0,0,0])],Nm=[1000],hist_params=tomographer.HistogramParams(0,1,10),mhrw_params=tomographer.MHRWParams(0.001,1000,1024,4096),progress_fn=lambda x:sys.stdout.write(x.getHumanReport()+'\\n'))"
   )
-set_tests_properties(test_pyload_dnormtomo_channelspace PROPERTIES  ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR})
+set_tests_properties(test_pyload_QPtomographer_channelspace PROPERTIES  ENVIRONMENT PYTHONPATH=${CMAKE_BINARY_DIR})
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# dnormtomo documentation build configuration file, created by
+# QPtomographer documentation build configuration file, created by
 # sphinx-quickstart on Mon Aug 21 12:25:18 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -56,7 +56,7 @@ author = 'Philippe Faist'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-from dnormtomo._version import version
+from QPtomographer._version import version
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -130,7 +130,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'dnormtomodoc'
+htmlhelp_basename = 'QPtomographerdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -157,7 +157,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'dnormtomo.tex', 'dnormtomo Documentation',
+    (master_doc, 'QPtomographer.tex', 'QPtomographer Documentation',
      'Philippe Faist', 'manual'),
 ]
 
@@ -167,7 +167,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'dnormtomo', 'dnormtomo Documentation',
+    (master_doc, 'QPtomographer', 'QPtomographer Documentation',
      [author], 1)
 ]
 
@@ -178,8 +178,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'dnormtomo', 'dnormtomo Documentation',
-     author, 'dnormtomo', 'One line description of project.',
+    (master_doc, 'QPtomographer', 'QPtomographer Documentation',
+     author, 'QPtomographer', 'One line description of project.',
      'Miscellaneous'),
 ]
 

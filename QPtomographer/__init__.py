@@ -2,7 +2,7 @@
 import collections as _collections
 
 
-# provide dnormtomo.__version__
+# provide QPtomographer.__version__
 from . import _version
 
 _VersionInfo = _collections.namedtuple("_VersionInfo", ("major", "minor") )

@@ -1,8 +1,8 @@
 
-Evaluating the figures of merit: `dnormtomo.figofmerit`
-=======================================================
+Evaluating the figures of merit: `QPtomographer.figofmerit`
+===========================================================
 
-.. py:module:: dnormtomo.figofmerit
+.. py:module:: QPtomographer.figofmerit
 
 This module provides some functions to calculate the diamond norm distance, the
 average entanglement fidelity as well as the worst-case entanglement fidelity.

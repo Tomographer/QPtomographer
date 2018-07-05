@@ -1,9 +1,9 @@
 
 //
-// dnormtomo.bistates -- Python module for determining the distribution of the diamond
-// norm for reliable quantum process tomography, "naive" version
+// QPtomographer.bistates -- Python module for determining the distribution of
+// the diamond norm for reliable quantum process tomography, "naive" version
 //
-// Requires the `tomographer` python package to be installed, version >= 5.3
+// Requires the `tomographer` python package to be installed, version >= 5.4
 //
 
 #include <tomographerpy/common.h>
@@ -593,10 +593,10 @@ PYBIND11_MODULE(bistates, m)
 
   pylogger = new tpy::PyLogger; // ownership will be taken over by Python/PyBind11
 
-  pylogger->initPythonLogger("dnormtomo.bistates");
+  pylogger->initPythonLogger("QPtomographer.bistates");
   auto logger = Tomographer::Logger::makeLocalLogger(TOMO_ORIGIN, *pylogger);
 
-  logger.debug("INIT DNORMTOMO.BISTATES");
+  logger.debug("INIT QPTOMOGRAPHER.BISTATES");
 
   // the main run call:
   m.def(
