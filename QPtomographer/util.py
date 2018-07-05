@@ -10,6 +10,10 @@ import qutip
 
 
 # A namespace to hold attributes
+#
+# Do NOT change this class name or relocate it.  Pickled output may use this
+# class and it needs to be reliably there to be able to load pickled files.
+#
 class _Store(object):
     def __init__(self, **kwargs):
         super(_Store, self).__init__()

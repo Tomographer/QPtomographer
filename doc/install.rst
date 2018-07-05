@@ -2,7 +2,7 @@
 Installation instructions
 -------------------------
 
-The `QPtomographer` package is uses the standard `setuptools` Python
+The `QPtomographer` package uses the standard `setuptools` Python
 infrastructure, providing a `setup.py` script like most other Python packages.
 
 There are some little things to set up first however.
@@ -13,13 +13,13 @@ Compiling SCS
 First, you need to compile `SCS ≥ 2.0 <https://github.com/cvxgrp/scs>`_. We make
 use of this great library to calculate the diamond norm distance between two
 channels.  (Unfortunately, it is not enough to install the `scs` Python package,
-because we need SCS' C interface.)
+because we need SCS's C interface.)
 
 Make sure you have downloaded SCS version 2.0.0 or later.
 
-Download (or clone) `SCS ≥ 2.0 <https://github.com/cvxgrp/scs>`_, say to
-``$HOME/Downloads/scs``, and compile it with specific options set.  This can be
-done with the following steps using the command-line.
+Download (or clone) `SCS <https://github.com/cvxgrp/scs/releases>`_, say
+to ``$HOME/Downloads/scs``, and compile it with specific options set.  This can
+be done with the following steps using the command-line.
 
 First, clone SCS into your `Downloads` directory, and enter that directory.
 (You may choose a different directory; the following instructions however assume

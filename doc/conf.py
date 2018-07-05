@@ -100,6 +100,7 @@ html_theme = 'alabaster'
 # documentation.
 #
 html_theme_options = {
+    'logo': 'QPtomographer.svg',
     'font_family': '"PT Serif", sans-serif',
     'font_size': '16px',
     'head_font_family': '"Roboto", sans-serif',
