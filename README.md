@@ -1,4 +1,6 @@
-# Reliable Diamond Norm Estimation for Quantum Process Tomography
+# Reliable Quantum Process Tomography
+
+![QPtomographer](QPtomographer.svg)
 
 Derive quantum error bars for quantum processes in terms of the diamond norm to
 a reference quantum channel.
