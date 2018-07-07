@@ -103,7 +103,7 @@ html_theme_options = {
     'logo': 'QPtomographer.svg',
     'font_family': '"PT Serif", sans-serif',
     'font_size': '16px',
-    'head_font_family': '"Roboto", sans-serif',
+    'head_font_family': '"PT Serif", sans-serif',
     'code_font_family': '"Roboto", monospace',
     'code_font_size': '0.9em',
 }

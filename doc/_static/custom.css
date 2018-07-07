@@ -78,7 +78,7 @@ div.important {
 
 
 div.genindex-jumpbox {
-    font-family: "Roboto", sans-serif;
+    /*font-family: "Roboto", sans-serif;*/
     font-weight: 500;
     border: solid 0.5px rgba(62, 67, 73, 0.4);
 }
@@ -91,8 +91,8 @@ div.body .genindextable {
     font-size: 0.9em;
 }
 #index ~ h2 {
-    font-size: 1.3em;
-    font-weight: 500;
+    font-size: 1.0em;
+    font-weight: bold;
     margin: 0.5em 0px 0px;
     border-bottom: solid 0.5px rgba(62, 67, 73, 0.4);
 }

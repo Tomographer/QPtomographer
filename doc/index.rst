@@ -5,8 +5,6 @@
 Reliable process tomography with QPtomographer
 ==============================================
 
-Welcome to the documentation for `QPtomographer`.
-
 This Python package implements practical and reliable diamond norm estimation to
 any reference channel, given any measurements taken in a quantum process
 tomography procedure, using the method described in |paper_arxiv_ref|.

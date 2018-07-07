@@ -79,7 +79,7 @@ diamond norm estimation.
       - `jump_mode`: one of ``"full"`` or ``"light"``, depending on the
         requested method of random walk step.  This argument has the same effect
         as the `jumps_method=` argument of
-        py:func:`tomographer.tomorun.tomorun()`.
+        :py:func:`tomographer.tomorun.tomorun()`.
 
       - `num_repeats`: the total number of random walks to run.  By default,
         this is set to the number of available cores.
