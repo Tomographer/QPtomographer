@@ -11,7 +11,7 @@ Theory: see arXiv:XXXX.XXXXX
 ## Installation
 
 See detailed installation instructions at
-https://QPtomographer.readthedocs.org/latest/install/ .
+https://QPtomographer.readthedocs.io/en/latest/install .
 
 Basically:
 
@@ -122,7 +122,7 @@ Full documentation of what `QPtomographer` does, how to call the code, and
 everything you always wanted to know about `QPtomographer` but didn't dare to
 ask, can be found at:
 
-https://QPtomographer.readthedocs.org/latest/
+https://QPtomographer.readthedocs.io/en/latest/install
 
 
 ## License
