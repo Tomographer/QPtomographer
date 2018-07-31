@@ -5,8 +5,13 @@
 Utility routines for reliable process tomography.
 """
 
-import numpy as np
-import qutip
+try:
+    import numpy as np
+    import qutip
+except ImportError:
+    # Allow readthedocs to parse this file without importing unknown module names
+    if os.environ.get('READTHEDOCS') != 'True':
+        raise
 
 
 # A namespace to hold attributes
