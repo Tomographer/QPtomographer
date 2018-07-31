@@ -10,8 +10,8 @@ Theory: see arXiv:XXXX.XXXXX
 
 ## Installation
 
-See detailed installation instructions at
-https://QPtomographer.readthedocs.io/en/latest/install .
+See detailed installation instructions here:
+https://QPtomographer.readthedocs.io/en/latest/install
 
 Basically:
 
