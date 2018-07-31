@@ -30,19 +30,21 @@ need SCS's C interface.)
 
 Make sure you have downloaded SCS version 2.0.0 or later.
 
-Download (or clone) `SCS <https://github.com/cvxgrp/scs/releases>`_, say
-to ``$HOME/Downloads/scs``, and compile it with specific options set.  This can
-be done with the following steps using the command-line.
+Download and unpack `SCS <https://github.com/cvxgrp/scs/releases>`_, say in
+``$HOME/Downloads/``, and compile it with specific options set.  This can be
+done as follows.
 
-First, clone SCS into your `Downloads` directory, and enter that directory.
-(You may choose a different directory; the following instructions assume you
-cloned SCS in the `Downloads` directory.)
+First, download `the latest version of SCS
+<https://github.com/cvxgrp/scs/releases>`_ into your `Downloads` directory,
+unpack that archive, and enter that directory.  (You may work in a different
+directory; the following instructions assume you unpacked SCS in the `Downloads`
+directory.)
 
 .. code-block:: bash
 
     > cd Downloads
-    > git clone https://github.com/cvxgrp/scs.git
-    > cd scs
+    > tar xvfz scs-2.0.2.tar.gz
+    > cd scs-2.0.2
 
 If you are on *Mac OS X*, compile SCS with the following command::
 
@@ -81,39 +83,63 @@ Prerequisite: Install `tomographer` and other Python packages
 Make sure you have already installed the `tomographer` package (version ≥ 5.4)
 along with its prerequisites, `as described here
 <https://tomographer.github.io/tomographer/get-started/#python-version>`_.
+Basically, you should run the following commands depending on whether you are
+using *anaconda* or *pip*::
+
+  # If you are using *pip* (or if you're not sure):
+  pip install numpy pybind11
+  pip install tomographer
+
+  # If you are using *conda*:
+  conda install numpy gcc libgcc
+  conda install -c conda-forge pybind11
+  pip install tomographer
+
+All ``pip install`` commands (e.g. ``pip install SOMEPACKAGE``) might have to be
+prefixed by ``sudo -H`` (e.g. ``sudo -H pip install SOMEPACKAGE``) if you need
+administrator priviledges, or you can use the option ``--user`` to install into
+a user directory (e.g. ``pip install SOMEPACKAGE --user``).
 
 
 The `QPtomographer` package also requires `qutip`.  Install it before
 proceeding::
 
-  # if you are using *conda*
-  conda install -c conda-forge qutip
-
   # if you are using *pip* (or if you're not sure)
   pip install qutip
 
+  # if you are using *conda*
+  conda install -c conda-forge qutip
 
 
-Download `QPtomographer`
-~~~~~~~~~~~~~~~~~~~~~~~~
 
-Obtain the most recent version of `QPtomographer` from the
+Download and install `QPtomographer`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO ........... pip ......??
+**Simplest solution using pip:**
+
+The simplest solution to install `QPtomographer` is using `pip`.  However, you
+need to set the environment variable ``SCS_ROOT`` to the root directory where
+you downloaded and compiled `SCS`::
+
+  # Works with both *conda* and *pip* users:
+  SCS_ROOT=$HOME/Downloads/scs-2.0.2 pip install QPtomographer
 
 
-Building and installing `QPtomographer`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Alternative: Building and installing QPtomographer from source:**
 
-Simply run::
+You can also install `QPtomographer` from source.  First, obtain the most recent
+version of `QPtomographer` from the `releases page
+<https://github.com/Tomographer/QPtomographer/releases>`_.
 
-  > SCS_ROOT=$HOME/Downloads/scs python setup.py install
+Then, after unpacking the archive, run the python setup script::
+
+  > SCS_ROOT=$HOME/Downloads/scs-2.0.2 python setup.py install
 
 specifying the path where you compiled SCS using the environment variable ``SCS_ROOT``.
 
 Or, to install as administrator::
 
-  > sudo -H SCS_ROOT=$HOME/Downloads/scs python setup.py install
+  > sudo -H SCS_ROOT=$HOME/Downloads/scs-2.0.2 python setup.py install
 
  
 .. important:: You should use the same compiler as the one you used to compile

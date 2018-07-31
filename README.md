@@ -10,41 +10,80 @@ Theory: see arXiv:XXXX.XXXXX
 
 ## Installation
 
-### Build SCS
+See detailed installation instructions at
+https://QPtomographer.readthedocs.org/latest/install/ .
 
-Download (or clone) [SCS ≥ 2.0](https://github.com/cvxgrp/scs), say to
-`$HOME/Downloads/scs`, and compile it as follows:
+Basically:
 
+- you need to download & compile [SCS ≥ 2.0](https://github.com/cvxgrp/scs);
+
+- you need to have the `tomographer` package
+  installed [as described here][tomographer_py_inst];
+  
+- you can install `QPtomographer` via `pip`.
+
+
+Here are quick-and-easy steps for some common setups:
+
+### Ubuntu/Linux
+
+Download & compile [SCS ≥ 2.0](https://github.com/cvxgrp/scs):
+
+    > cd $HOME/Downloads
+    > curl -L https://github.com/cvxgrp/scs/archive/v2.0.2.tar.gz -o scs-2.0.2.tar.gz
+    > tar xvfz scs-2.0.2.tar.gz && cd scs-2.0.2
     > make CTRLC=0 USE_OPENMP=0 USE_LAPACK=1
 
-On some systems such as on *Mac OS X*, you might have to adjust or specify the
-necessary flags for linking to `BLAS/LAPACK`.  Use the variable
-`BLASLDFLAGS="..."` for that.  For instance, on *Mac OS X*, you should probably
-use:
+Download & compile `tomographer ≥ 5.4` and other prerequisites:
 
+    # If you are using *pip* (or if you're not sure):
+    > pip install numpy pybind11 qutip
+    > pip install tomographer
+
+    # If you are using *anacoda/conda*:
+    > conda install numpy gcc libgcc
+    > conda install -c conda-forge pybind11 qutip
+    > pip install tomographer
+
+Install `QPtomographer` via `pip`:
+
+    > SCS_ROOT=$HOME/Downloads/scs-2.0.2 pip install QPtomographer
+
+
+### Apple Mac OS X
+
+Download & compile [SCS ≥ 2.0](https://github.com/cvxgrp/scs):
+
+    > cd $HOME/Downloads
+    > curl -L https://github.com/cvxgrp/scs/archive/v2.0.2.tar.gz -o scs-2.0.2.tar.gz
+    > tar xvfz scs-2.0.2.tar.gz && cd scs-2.0.2
     > make CTRLC=0 USE_OPENMP=0 USE_LAPACK=1 BLASLDFLAGS="-framework Accelerate"
-    
 
-## Install `tomographer` and its prerequisites
+Download & compile `tomographer` and other prerequisites:
 
-Make sure you have already installed the `tomographer` package, [as described
-here][tomographer_py_inst].
+    # If you are using *pip* (or if you're not sure):
+    > pip install numpy pybind11 qutip
+    > pip install tomographer
 
-You need `tomographer` version ≥ 5.4.
+    # If you are using *anacoda/conda*:
+    > conda install numpy gcc libgcc
+    > conda install -c conda-forge pybind11 qutip
+    > pip install tomographer
 
-[tomographer_py_inst]: https://tomographer.github.io/tomographer/get-started/#python-version
+Install `QPtomographer` via `pip`:
+
+    > SCS_ROOT=$HOME/Downloads/scs-2.0.2 pip install QPtomographer
 
 
-## Building and installing `QPtomographer`
+
+## Alternatively, you can build and install `QPtomographer` from source
 
 You should only have to run
 
     > SCS_ROOT=$HOME/Downloads/scs python setup.py install
 
 specifying the path where you compiled SCS using the environment variable
-`SCS_ROOT`.
-
-Or, to install as administrator,
+`SCS_ROOT`.  Or, to install as administrator,
 
     > sudo -H SCS_ROOT=$HOME/Downloads/scs python setup.py install
 
@@ -53,17 +92,6 @@ the C++ flags set for `tomographer` itself, and uses those same flags. Thus, if
 `tomographer` compiled, `QPtomographer` should compile as well (just make sure
 you use the same compiler).
 
-### NOTE: Installing using `pip`
-You can also install `QPtomographer` using `pip`, so that it is properly seen as a
-package and can be uninstalled easily.  For that, build a source package and
-install it by running the following commands:
-
-    > SCS_ROOT=$HOME/Downloads/scs python setup.py sdist  # creates dist/QPtomographer-1.0.tar.gz
-    > SCS_ROOT=$HOME/Downloads/scs pip install dist/QPtomographer-1.0.tar.gz  # might need sudo -H as above
-
-Then `QPtomographer` is seen as an installed wheel package, which has a certain
-number of advantages.  For instance, you can uninstall easily with `pip
-uninstall QPtomographer`.
 
 
 # License
