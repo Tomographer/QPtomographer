@@ -10,6 +10,7 @@ try:
     import qutip
 except ImportError:
     # Allow readthedocs to parse this file without importing unknown module names
+    import os
     if os.environ.get('READTHEDOCS') != 'True':
         raise
 
