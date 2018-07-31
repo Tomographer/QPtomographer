@@ -77,7 +77,8 @@ tpy::RealScalar figofmerit_avg_entgl_fidelity2(
   tomographer_assert(dim_X * dim_Y == dim_XY) ;
 
   if (dim_X != dim_Y) {
-    throw py::value_error("average entanglement fidelity to identity channel: input and output dimensions must be equal.");
+    throw py::value_error("average entanglement fidelity to identity channel: "
+                          "input and output dimensions must be equal.");
   }
 
   return entanglement_fidelity(E_XY, dim_X);
@@ -102,7 +103,8 @@ scs_float figofmerit_worst_entgl_fidelity2(
   tomographer_assert(dim_X * dim_Y == dim_XY) ;
 
   if (dim_X != dim_Y) {
-    throw py::value_error("worst-case entanglement fidelity to identity channel: input and output dimensions must be equal.");
+    throw py::value_error("worst-case entanglement fidelity to identity channel: "
+                          "input and output dimensions must be equal.");
   }
 
   scs_float epsilon = opt.attr("get")("epsilon"_s, 1e-6).cast<scs_float>();

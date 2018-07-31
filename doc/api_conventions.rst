@@ -50,3 +50,6 @@ onto a state :math:`\sigma` is computed as
 
 where :math:`\sigma_X^T` is the partial transpose of :math:`\sigma_X` during
 which the system :math:`X` is relabled as :math:`R`.
+
+The unnormalized Choi matrix can be represented as a NumPy :py:class:`array
+<numpy.ndarray>` or as a :py:class:`qutip.Qobj` in the same way as states.

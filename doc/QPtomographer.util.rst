@@ -1,6 +1,6 @@
 
-`QPtomographer.util` module
-===========================
+Some utilities: `QPtomographer.util`
+====================================
 
 .. automodule:: QPtomographer.util
     :members:
