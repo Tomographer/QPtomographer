@@ -15,6 +15,7 @@ tomography procedure, using the method described in |paper_arxiv_ref|.
 
    install
    figures_of_merit
+   api_conventions
    QPtomographer
 
 

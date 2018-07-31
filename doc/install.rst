@@ -5,15 +5,28 @@ Installation instructions
 The `QPtomographer` package uses the standard `setuptools` Python
 infrastructure, providing a `setup.py` script like most other Python packages.
 
+It may also be installed, as most other Python packages, using `pip`.
+
 There are some little things to set up first however.
 
-Compiling SCS
-~~~~~~~~~~~~~
 
-First, you need to compile `SCS ≥ 2.0 <https://github.com/cvxgrp/scs>`_. We make
-use of this great library to calculate the diamond norm distance between two
-channels.  (Unfortunately, it is not enough to install the `scs` Python package,
-because we need SCS's C interface.)
+Prerequisite: Install BLAS/Lapack
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You need a working installation of BLAS/Lapack.  This is provided by default on
+`Mac OS X`, in which case you don't have to do anything.  On Ubuntu, run the
+command::
+
+  sudo apt-get install liblapack-dev
+
+
+Prerequisite: Compile SCS
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You need to compile `SCS ≥ 2.0 <https://github.com/cvxgrp/scs>`_. We make use of
+this great library to calculate the diamond norm distance between two channels.
+(Unfortunately, it is not enough to install the `scs` Python package, because we
+need SCS's C interface.)
 
 Make sure you have downloaded SCS version 2.0.0 or later.
 
@@ -22,8 +35,8 @@ to ``$HOME/Downloads/scs``, and compile it with specific options set.  This can
 be done with the following steps using the command-line.
 
 First, clone SCS into your `Downloads` directory, and enter that directory.
-(You may choose a different directory; the following instructions however assume
-you clone SCS in the `Downloads` directory.)
+(You may choose a different directory; the following instructions assume you
+cloned SCS in the `Downloads` directory.)
 
 .. code-block:: bash
 
@@ -44,7 +57,7 @@ Otherwise (e.g. on *Linux*), compile SCS with the following command::
 *Notes:*
 
  - ``CTRLC=0`` is needed because we will catch *Ctrl+C* keystrokes ourselves,
-   and SCS's keystrokes captures interferes with our own mechanicsm.
+   and we don't want SCS to interfere with this.
    
  - We neeed ``USE_OPENMP=0`` because our invokation of *SCS* is already within
    parallel tasks, so we want to avoid double-parallelism which won't speed up
@@ -62,13 +75,31 @@ Otherwise (e.g. on *Linux*), compile SCS with the following command::
 
 
 
-Install `tomographer` and its prerequisites
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Prerequisite: Install `tomographer` and other Python packages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Make sure you have already installed the `tomographer` package (version ≥ 5.4),
-`as described here
+Make sure you have already installed the `tomographer` package (version ≥ 5.4)
+along with its prerequisites, `as described here
 <https://tomographer.github.io/tomographer/get-started/#python-version>`_.
 
+
+The `QPtomographer` package also requires `qutip`.  Install it before
+proceeding::
+
+  # if you are using *conda*
+  conda install -c conda-forge qutip
+
+  # if you are using *pip* (or if you're not sure)
+  pip install qutip
+
+
+
+Download `QPtomographer`
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Obtain the most recent version of `QPtomographer` from the
+
+TODO ........... pip ......??
 
 
 Building and installing `QPtomographer`
@@ -84,6 +115,7 @@ Or, to install as administrator::
 
   > sudo -H SCS_ROOT=$HOME/Downloads/scs python setup.py install
 
+ 
 .. important:: You should use the same compiler as the one you used to compile
                the `tomographer` package.
 

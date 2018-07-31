@@ -303,7 +303,7 @@ public:
     //
     
     typename ChannelTypes::VectorParamType x = px.HermToX(Rho);
-    // NOTE: we assume that the currect input state for each repetition is encoded into the list of POVM effects
+    // NOTE: we assume that the correct input state for each repetition is encoded into the list of POVM effects
     return llh.logLikelihoodX(x);
   }
 

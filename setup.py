@@ -26,7 +26,11 @@ except ImportError:
 try:
     import tomographer # prerequisite
 except ImportError:
-    raise RuntimeError("ERROR: Please install `tomographer` first.")
+    raise RuntimeError(
+        "ERROR: Please install `tomographer` first. "
+        "(See https://tomographer.github.io/tomographer/get-started/#python-version )"
+    )
+
 # version check
 import tomographer.version
 if tomographer.version.version_info < (5, 3):

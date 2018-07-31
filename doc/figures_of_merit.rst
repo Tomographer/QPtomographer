@@ -85,11 +85,14 @@ where the optimization ranges over all bipartite quantum states defined over the
 input and a reference system :math:`R\simeq X`, and where :math:`F(\rho,\sigma)`
 is defined as above.
 
-The optimization may be restricted to pure states without loss of generality.
+The optimization may be restricted to pure states without loss of generality,
+because the minimum of a concave function is over a convex set is reached at the
+boundary of the set.
 
 The worst-case entanglement fidelity may be computed by evaluating the following
-semidefinite program, in terms of the real variable :math:`\mu` and positive
-semidefinite variable :math:`\rho_X \geqslant 0`:
+semidefinite program (as described in |paper_arxiv_ref|), in terms of the real
+variable :math:`\mu` and positive semidefinite variable :math:`\rho_X \geqslant
+0`:
 
 .. math::
    \begin{array}{rcl}

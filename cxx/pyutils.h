@@ -93,5 +93,19 @@ MatrixType get_ref_channel(const int dimX, const int dimY, py::object ref_channe
 }
 
 
+
+
+
+// provide this function for compatibility with tomographer 5.4
+// (tpy::checkPyException() was introduced in 5.5)
+void qptomographer_checkPyException()
+{
+  if (PyErr_Occurred() != NULL || PyErr_CheckSignals() == -1) {
+    fprintf(stderr, "DEBUG:: Python exception set, throwing PyFetchedException\n") ;
+    throw tpy::PyFetchedException();
+  }
+}
+
+
 #endif
 

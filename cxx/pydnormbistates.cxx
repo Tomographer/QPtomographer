@@ -91,7 +91,10 @@ public:
   tpy::RealScalar getValue(const DMTypes::MatrixType & T) const
   {
     py::gil_scoped_acquire gil_acquire;
-    return fn(py::cast(T)).cast<tpy::RealScalar>();
+    qptomographer_checkPyException();
+    tpy::RealScalar val = fn(py::cast(T)).cast<tpy::RealScalar>();
+    qptomographer_checkPyException();
+    return val;
   }
 
 private:
@@ -373,7 +376,18 @@ py::dict tomo_run_dnorm_bistates(py::kwargs kwargs)
 
   int fig_of_merit_multiplexor_idx = 0;
 
-  if (fig_of_merit.is_none() || fig_of_merit.attr("__eq__")("diamond-distance"_s).cast<bool>()) {
+  if (!fig_of_merit.is_none() && py::hasattr(fig_of_merit, "__call__"_s)) {
+    // custom callable. Consider this case first so we don't risk calling
+    // '__eq__' on a callable object, which pybind11 doesn't like
+
+    // got a callable as argument, the third possibility
+    fig_of_merit_multiplexor_idx = 3;
+
+    logger.debug([&](std::ostream & stream) {
+        stream << "Using custom callable as figure of merit";
+      });
+
+  } else if (fig_of_merit.is_none() || fig_of_merit.attr("__eq__")("diamond-distance"_s).cast<bool>()) {
 
     // diamond norm distance, the default
 
@@ -399,20 +413,11 @@ py::dict tomo_run_dnorm_bistates(py::kwargs kwargs)
 
   } else if (fig_of_merit.attr("__eq__")("worst-entanglement-fidelity"_s).cast<bool>()) {
 
-    // use worst-case entanglement fidelity, the second possibility
+    // use entanglement fidelity, the second possibility
     fig_of_merit_multiplexor_idx = 2;
 
     logger.debug([&](std::ostream & stream) {
-        stream << "Using worst-case entanglement fidelity as figure of merit";
-      });
-
-  } else if (py::hasattr(fig_of_merit, "__call__"_s)) {
-
-    // got a callable as argument, the third possibility
-    fig_of_merit_multiplexor_idx = 3;
-
-    logger.debug([&](std::ostream & stream) {
-        stream << "Using custom callable as figure of merit";
+        stream << "Using entanglement fidelity as figure of merit";
       });
 
   } else {
@@ -492,13 +497,18 @@ py::dict tomo_run_dnorm_bistates(py::kwargs kwargs)
 
     } catch (tpy::PyFetchedException & pyerr) {
 
-      // acquire GIL for PyErr_Restore()
+      // acquire GIL for logger and PyErr_Restore()
       py::gil_scoped_acquire gil_acquire;
+
+      logger.debug("Python exception set.");
 
       pyerr.restorePyException();
       throw py::error_already_set();
       
     } catch (std::exception & e) {
+
+      // acquire GIL for logger
+      py::gil_scoped_acquire gil_acquire;
 
       // another exception
       logger.debug("Exception: %s", e.what());

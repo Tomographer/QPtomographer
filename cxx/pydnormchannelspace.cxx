@@ -87,7 +87,10 @@ public:
   tpy::RealScalar getValue(const MyChannelTypes::VIsometryType & T) const
   {
     py::gil_scoped_acquire gil_acquire;
-    return fn(py::cast(T)).cast<tpy::RealScalar>();
+    qptomographer_checkPyException();
+    tpy::RealScalar val = fn(py::cast(T)).cast<tpy::RealScalar>();
+    qptomographer_checkPyException();
+    return val;
   }
 
 private:
@@ -310,7 +313,7 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
   }
 
   logger.debug([&](std::ostream & ss) {
-      ss << "\n\nExn: size="<<llh.Exn().size()<<"\n"
+      ss << "Measurement data is:\n\nExn: size="<<llh.Exn().size()<<"\n"
 	 << llh.Exn() << "\n";
       ss << "\n\nNx: size="<<llh.Nx().size()<<"\n"
 	 << llh.Nx() << "\n";
@@ -321,6 +324,10 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
     throw py::value_error("num_repeats must be >= 1") ;
   }
 
+  logger.debug([&](std::ostream & stream) {
+      stream << "About to consider figure of merit...";
+    });
+
   //
   // Prepare the figure of merit calculator:  diamond norm to the reference channel.
   //
@@ -328,7 +335,18 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
 
   int fig_of_merit_multiplexor_idx = 0;
 
-  if (fig_of_merit.is_none() || fig_of_merit.attr("__eq__")("diamond-distance"_s).cast<bool>()) {
+  if (!fig_of_merit.is_none() && py::hasattr(fig_of_merit, "__call__"_s)) {
+    // custom callable. Consider this case first so we don't risk calling
+    // '__eq__' on a callable object, which pybind11 doesn't like
+
+    // got a callable as argument, the third possibility
+    fig_of_merit_multiplexor_idx = 3;
+
+    logger.debug([&](std::ostream & stream) {
+        stream << "Using custom callable as figure of merit";
+      });
+
+  } else if (fig_of_merit.is_none() || fig_of_merit.attr("__eq__")("diamond-distance"_s).cast<bool>()) {
 
     // diamond norm distance, the default
 
@@ -359,15 +377,6 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
 
     logger.debug([&](std::ostream & stream) {
         stream << "Using entanglement fidelity as figure of merit";
-      });
-
-  } else if (py::hasattr(fig_of_merit, "__call__"_s)) {
-
-    // got a callable as argument, the third possibility
-    fig_of_merit_multiplexor_idx = 3;
-
-    logger.debug([&](std::ostream & stream) {
-        stream << "Using custom callable as figure of merit";
       });
 
   } else {
@@ -452,13 +461,18 @@ py::dict tomo_run_dnorm_channels(py::kwargs kwargs)
 
     } catch (tpy::PyFetchedException & pyerr) {
 
-      // acquire GIL for PyErr_Restore()
+      // acquire GIL for logger and PyErr_Restore()
       py::gil_scoped_acquire gil_acquire;
+
+      logger.debug("Python exception set.");
 
       pyerr.restorePyException();
       throw py::error_already_set();
       
     } catch (std::exception & e) {
+
+      // acquire GIL for logger
+      py::gil_scoped_acquire gil_acquire;
 
       // another exception
       logger.debug("Exception: %s", e.what());

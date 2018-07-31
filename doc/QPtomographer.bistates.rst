@@ -29,9 +29,9 @@ diamond norm estimation.
    All arguments should be specified as keyword arguments. Accepted arguments
    are:
 
-      - `dimX`: dimension of input system
+      - `dimX`: dimension of input system (required)
 
-      - `dimY`: dimension of output system
+      - `dimY`: dimension of output system (required)
 
       - `Emn`: a list of POVM effects on :math:`X\otimes Y`.  Should be a python
         list where each item is a matrix provided as a complex :math:`d_X
@@ -48,18 +48,19 @@ diamond norm estimation.
 
         The callable will be invoked with as argument a square complex matrix of
         shape `(d_X*dY, d_X*d_Y)` given as a NumPy array, and where the process
-        matrix is simply given as::
+        matrix, a normalized state, can be simply computed as::
 
-          rho_YR = T * T.conj().T   # T * T'
+          rho_YR = np.dot(T, T.conj().T)   # T * T'
 
       - `ref_channel_XY`: the reference channel to which to calculate the
-        diamond norm distance to. Specify the channel by its Choi matrix on
+        diamond norm distance to.  This argument is not used if `fig_of_merit`
+        is not 'diamond-distance'.  Specify the channel by its Choi matrix on
         :math:`X\otimes Y`, as a :math:`d_X d_Y \times d_X d_Y` `NumPy`
         array. The normalization should be such that the reduced state on
         :math:`X` is the identity operator, ie., the trace of the full matrix
         should be equal to :math:`d_X`.
 
-        If `dimX==dimY`, you may set to `ref_channel_XY=None`, in which case the
+        If `dimX==dimY`, you may set `ref_channel_XY=None`, in which case the
         identity process (with respect to the canonical basis) is used as
         reference channel.
 
@@ -71,15 +72,15 @@ diamond norm estimation.
         the sweep size, number of thermalization sweeps and number of live run
         sweeps.  Specify as a :py:class:`tomographer.MHRWParams` object.
 
-      - `dnorm_epsilon`: the precision at which to calculate the diamond norm
-        (which is calculated by numerically solving the corresponding
-        semidefinite program using `SCS <https://github.com/cvxgrp/scs>`_). The
-        default is `1e-3`.
-
       - `jump_mode`: one of ``"full"`` or ``"light"``, depending on the
         requested method of random walk step.  This argument has the same effect
         as the `jumps_method=` argument of
         :py:func:`tomographer.tomorun.tomorun()`.
+
+      - `dnorm_epsilon`: the precision at which to calculate the diamond norm
+        (which is calculated by numerically solving the corresponding
+        semidefinite program using `SCS <https://github.com/cvxgrp/scs>`_). The
+        default is `1e-3`.
 
       - `num_repeats`: the total number of random walks to run.  By default,
         this is set to the number of available cores.
