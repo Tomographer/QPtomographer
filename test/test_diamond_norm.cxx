@@ -111,7 +111,7 @@ BOOST_FIXTURE_TEST_CASE(simple_qubit_scs, identdefs<2>)
   DiamondNormSCSSolver<double,Tomographer::Logger::BoostTestLogger,true> d(2, 2, 1e-3, lg);
   double value = d.calculate(Delta);
 
-  BOOST_CHECK_CLOSE( value, 0.1, 1e-1/*percent*/ );
+  BOOST_CHECK_CLOSE( value, 0.1, 1/*percent*/ );
 }
 
 BOOST_FIXTURE_TEST_CASE(qutrit_case_scs, identdefs<3>)
@@ -142,7 +142,7 @@ BOOST_FIXTURE_TEST_CASE(qutrit_case_scs, identdefs<3>)
   double value = d.calculate(Delta);
 
   // calculated by solving the SDP with MATLAB/CVX
-  BOOST_CHECK_CLOSE( value, 0.42666667, 1e-1/*percent*/ );
+  BOOST_CHECK_CLOSE( value, 0.42666667, 1/*percent*/ );
 }
 
 BOOST_AUTO_TEST_SUITE_END(); // examples
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(dsolver_scs)
 
   BOOST_TEST_MESSAGE("diamond-norm(true_E) = " << val);
   // value calculated using Python/QuTip
-  BOOST_CHECK_CLOSE(val, 0.05, 1e-1/*percent*/) ;
+  BOOST_CHECK_CLOSE(val, 0.05, 1/*percent*/) ;
 }
 
 BOOST_AUTO_TEST_CASE(example)
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(example)
 
     double val = valcalc.getValue(T);
     // value calculated using Python/QuTip
-    BOOST_CHECK_CLOSE(val, 0.05, 1e-1/*percent*/) ;
+    BOOST_CHECK_CLOSE(val, 0.05, 1/*percent*/) ;
   }
 }
 

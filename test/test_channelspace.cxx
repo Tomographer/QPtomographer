@@ -158,7 +158,7 @@ BOOST_FIXTURE_TEST_CASE(jump_fn_symmetric_eiH, qubit_to_qutrit_fixture_DEBUG<Ran
   // average over many steps starting from the same V0 and normalize --> should be V0
   // again
 
-  const int N = 5000000;
+  const int N = 100000;
   const double step_size = 0.1;
 
   PointType totalV = PointType::Zero(llh.dmt.dimXY2(), llh.dmt.dimX());
@@ -177,7 +177,7 @@ BOOST_FIXTURE_TEST_CASE(jump_fn_symmetric_eiH, qubit_to_qutrit_fixture_DEBUG<Ran
   BOOST_TEST_MESSAGE("normalized = \n" << totalV) ;
 
   double err = (totalV - V0).cwiseAbs().maxCoeff();
-  double errok = 5 * 4*step_size/std::sqrt(N); // approx. 4 sigma, factor 5 to keep some safe margin
+  double errok = 5 * 4*step_size/std::sqrt(double(N)); // approx. 4 sigma, factor 5 to keep some safe margin
   BOOST_TEST_MESSAGE("err = " << err << ", errok = " << errok) ;
   BOOST_CHECK_LT(err, errok) ;
 }
@@ -191,7 +191,7 @@ BOOST_FIXTURE_TEST_CASE(jump_fn_symmetric_elr, qubit_to_qutrit_fixture_DEBUG<Ele
   // average over many steps starting from the same V0 and normalize --> should be V0
   // again
 
-  const int N = 5000000;
+  const int N = 100000;
   const double step_size = 0.1;
 
   PointType totalV = PointType::Zero(llh.dmt.dimXY2(), llh.dmt.dimX());
@@ -210,7 +210,7 @@ BOOST_FIXTURE_TEST_CASE(jump_fn_symmetric_elr, qubit_to_qutrit_fixture_DEBUG<Ele
   BOOST_TEST_MESSAGE("normalized = \n" << totalV) ;
 
   double err = (totalV - V0).cwiseAbs().maxCoeff();
-  double errok = 5 * 4*step_size/std::sqrt(N); // approx. 4 sigma, factor 5 to keep some safe margin
+  double errok = 5 * 4*step_size/std::sqrt(double(N)); // approx. 4 sigma, factor 5 to keep some safe margin
   BOOST_TEST_MESSAGE("err = " << err << ", errok = " << errok) ;
   BOOST_CHECK_LT(err, errok) ;
 }
