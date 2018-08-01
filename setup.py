@@ -63,7 +63,7 @@ vv.setDefault('CXX_FLAGS', " ".join((shlexquote(x) for x in tomographer.version.
 if not vv.get('SCS_ROOT'):
     raise RuntimeError("Please specify where to look for the SCS library and headers "
                        "using the environment variable SCS_ROOT. Check out the README "
-                       "for more info.")
+                       "for more info at https://github.com/Tomographer/QPtomographer .")
 
 if not os.path.isdir(vv.get('SCS_ROOT')):
     raise RuntimeError("$SCS_ROOT='" + vv.get('SCS_ROOT') + "' does not point to a "
@@ -114,6 +114,9 @@ common_headers = [
 from QPtomographer._version import version
 
 
+with open('README.md', 'r') as f:
+    README = f.read()
+
 #
 # Set up the python package
 #
@@ -123,6 +126,7 @@ setup(name="QPtomographer",
       author='Philippe Faist',
       author_email='phfaist@caltech.edu',
       description='Reliable Diamond Norm Estimation for Quantum Process Tomography',
+      long_description=README,
       packages=[
           'QPtomographer'
       ],
