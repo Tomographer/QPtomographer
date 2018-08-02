@@ -5,7 +5,7 @@
 Derive quantum error bars for quantum processes in terms of the diamond norm to
 a reference quantum channel.
 
-Theory: see arXiv:XXXX.XXXXX
+Theory: see [arXiv:1808.00358](https://arxiv.org/abs/1808.00358).
 
 
 ## Installation

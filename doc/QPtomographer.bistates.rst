@@ -12,7 +12,7 @@ diamond norm estimation.
 
    The main execution routine for the bipartite state sampling method.  This
    function behaves analogously to :py:func:`tomographer.tomorun.tomorun()`, but
-   in the setting described in |paper_arxiv_ref| and calculating the diamond
+   in the setting described in |paper_arxiv_ref|_ and calculating the diamond
    norm to a reference channel as figure of merit.
 
    As described in the paper, the log-likelihood function is calculated from the

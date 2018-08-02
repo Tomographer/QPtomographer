@@ -87,8 +87,9 @@ pygments_style = 'sphinx'
 todo_include_todos = False
 
 # Epilog for RST files. Useful for defining global substitutions.
-rst_epilog = ur'''
-.. |paper_arxiv_ref| replace:: [arXiv:XXXX.XXXXX (TBD)]
+rst_epilog = u'''
+.. |paper_arxiv_ref| replace:: arXiv:1808.00358
+.. _paper_arxiv_ref: https://arxiv.org/abs/1808.00358
 '''
 
 

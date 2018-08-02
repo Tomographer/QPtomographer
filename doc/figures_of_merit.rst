@@ -90,7 +90,7 @@ because the minimum of a concave function is over a convex set is reached at the
 boundary of the set.
 
 The worst-case entanglement fidelity may be computed by evaluating the following
-semidefinite program (as described in |paper_arxiv_ref|), in terms of the real
+semidefinite program (as described in |paper_arxiv_ref|_), in terms of the real
 variable :math:`\mu` and positive semidefinite variable :math:`\rho_X \geqslant
 0`:
 

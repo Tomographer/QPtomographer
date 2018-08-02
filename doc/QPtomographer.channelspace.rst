@@ -12,7 +12,7 @@ diamond norm estimation.
 
    The main execution routine for the channel-space state sampling method.  This
    function behaves analogously to :py:func:`tomographer.tomorun.tomorun()`, but
-   in the setting described in |paper_arxiv_ref| and calculating a :ref:`figure
+   in the setting described in |paper_arxiv_ref|_ and calculating a :ref:`figure
    of merit for quantum processes <figures-of-merit>`.
 
    Note: The `Emn` matrices must be weighted by input state as follows. The

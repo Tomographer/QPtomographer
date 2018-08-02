@@ -4,7 +4,7 @@ Package: `QPtomographer`
 .. module:: QPtomographer
 
 The `QPtomographer` package groups the related reliable process tomography
-routines described in |paper_arxiv_ref|.
+routines described in |paper_arxiv_ref|_.
 
 The useful code is concentrated in the two following modules:
 
