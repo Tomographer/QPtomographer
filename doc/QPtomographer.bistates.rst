@@ -46,11 +46,48 @@ diamond norm estimation.
         'worst-entanglement-fidelity', or a custom callable Python object.
         Refer to section :ref:`figures-of-merit`.
 
-        The callable will be invoked with as argument a square complex matrix of
-        shape `(d_X*dY, d_X*d_Y)` given as a NumPy array, and where the process
-        matrix, a normalized state, can be simply computed as::
+        The callable will be invoked with as argument a square complex matrix
+        :math:`T` of shape `(d_X*dY, d_X*d_Y)` given as a NumPy array, and where
+        the process matrix, a normalized bipartite state, can be simply computed
+        as :math:`T T^\dagger`.  If you conjugate by the inverse square root of
+        the reduced state on the first system, you get the Choi matrix of the
+        process.  The following code computes this::
 
-          rho_YR = np.dot(T, T.conj().T)   # T * T'
+          def custfigofmerit(T):
+              # compute average entanglement fidelity manually with custom
+              # callable, assuming a qubit->qubit quantum channel
+              #
+              # T is a numpy object of size (dX*dY, dX*dY) representing a
+              # square root of a bipartite state (the current point of the
+              # random walk).
+              #print(T)
+          
+              # To compute the Choi matrix of the process encoded in T:
+              #
+              # Compute the bipartite state (Choi matrix weighted by input state)
+              rho_RB = np.dot(T, T.conj().T)
+              rho_q_RB = qutip.Qobj(rho_RB, dims=[[2,2],[2,2]])
+              # conjugate by inverse square root of input state to get Choi matrix
+              invsqrtmrho_R = qutip.tensor(invsqrtm(rho_q_RB.ptrace([0])), qutip.qeye(2))
+              E_RB = invsqrtmrho_R * rho_q_RB * invsqrtmrho_R
+          
+              #print(E_RB)
+              #print(E_RB.ptrace([0]))
+              assert npl.norm( E_RB.ptrace([0]).data.toarray() - np.eye(2), 'nuc' ) <= 1e-6
+          
+              # Maximally entangled ket between R and A:  Phi_RA = (\sum_k |k>_R |k>_A)
+              Phi_RA = qutip.Qobj(np.eye(2).reshape([4,1]), dims=[[2,2],[1]])
+          
+              # <\Phi|_RA E_RB |\Phi>_RA / (2*2) :  divide by (2*2) because \Phi is not normalized
+              val = qutip.expect(E_RB, Phi_RA) / (2*2)
+              return val
+
+          # helper function: compute matrix inverse square root of a Hermitian `qutip.Qobj` matrix
+          def invsqrtm(Aq):
+              d, V = npl.eigh(Aq.data.toarray())
+              return qutip.Qobj(np.dot(np.dot(V, np.diag(np.reciprocal(np.sqrt(d)))), V.conj().T),
+                                dims=Aq.dims)
+          
 
       - `ref_channel_XY`: the reference channel to which to calculate the
         diamond norm distance to.  This argument is not used if `fig_of_merit`
@@ -72,7 +109,7 @@ diamond norm estimation.
         the sweep size, number of thermalization sweeps and number of live run
         sweeps.  Specify as a :py:class:`tomographer.MHRWParams` object.
 
-      - `jump_mode`: one of ``"full"`` or ``"light"``, depending on the
+      - `jumps_method`: one of ``"full"`` or ``"light"``, depending on the
         requested method of random walk step.  This argument has the same effect
         as the `jumps_method=` argument of
         :py:func:`tomographer.tomorun.tomorun()`.

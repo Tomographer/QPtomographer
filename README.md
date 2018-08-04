@@ -43,7 +43,7 @@ Download & compile `tomographer ≥ 5.4` and other prerequisites:
     > pip install numpy scipy pybind11 qutip
     > pip install tomographer
 
-    # If you are using *anacoda/conda*:
+    # If you are using *anaconda/conda*:
     > conda install numpy scipy gcc libgcc
     > conda install -c conda-forge pybind11 qutip
     > pip install tomographer
@@ -67,8 +67,8 @@ Download & compile `tomographer` and other prerequisites:
     > pip install numpy pybind11 qutip
     > pip install tomographer
 
-    # If you are using *anacoda/conda*:
-    > conda install numpy gcc libgcc
+    # If you are using *anaconda/conda*:
+    > conda install numpy scipy gcc libgcc
     > conda install -c conda-forge pybind11 qutip
     > pip install tomographer
 
@@ -98,12 +98,11 @@ you use the same compiler).
 The `examples/` folder contains examples using `QPtomographer`.
 
 The examples are provided as [jupyter notebooks][jpynb] (`*.ipynb` files).
-Jupyter is a convenient environment, inspired by Mathematica and powered by
-Python, for running code interactively.
+Jupyter is a convenient environment for running code interactively, inspired by
+Mathematica and powered by Python.
 
-To run an example, first [install jupyter locally][jpyinst].  Then, in a
-terminal, enter the current `examples/` directory in `QPtomographer` and launch
-jupyter:
+To run an example, first [install jupyter][jpyinst].  Then, in a terminal, enter
+the `examples/` directory in `QPtomographer` sources and launch jupyter:
 
     > cd QPtomographer/examples
     > jupyter notebook

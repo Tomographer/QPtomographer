@@ -87,11 +87,11 @@ Basically, you should run the following commands depending on whether you are
 using *anaconda* or *pip*::
 
   # If you are using *pip* (or if you're not sure):
-  pip install numpy pybind11
+  pip install numpy scipy pybind11
   pip install tomographer
 
   # If you are using *conda*:
-  conda install numpy gcc libgcc
+  conda install numpy scipy gcc libgcc
   conda install -c conda-forge pybind11
   pip install tomographer
 
@@ -125,7 +125,7 @@ you downloaded and compiled `SCS`::
   SCS_ROOT=$HOME/Downloads/scs-2.0.2 pip install QPtomographer
 
 
-**Alternative: Building and installing QPtomographer from source:**
+**Alternative: Building and installing QPtomographer manually:**
 
 You can also install `QPtomographer` from source.  First, obtain the most recent
 version of `QPtomographer` from the `releases page
